@@ -1,0 +1,107 @@
+.navbar {
+    background:#f9ad36;
+}
+
+$container-max-widths: (
+  sm: 540px,
+  md: 720px,
+  lg: 1100px,
+  xl: 1140px,
+  xxl: 1320px
+);
+
+.container-lg {
+    max-width: 900px;
+}
+
+
+.row {
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+
+.body {
+    background:#fbfbfb;
+    z-index: 1;
+}
+
+/* Begin "borrowed" code from the live version */
+
+#editor-wrapper {
+  position: relative;
+}
+#editor {
+  width: 100%;
+  border: 1px solid #eee;
+  z-index: 1;
+}
+#editor-result {
+  position: absolute;
+  color: transparent;
+  border: 1px solid transparent;
+  top: 10px;
+  left: 10px;
+  right: 10px;
+  z-index: -1;
+  overflow-y: auto;
+}
+
+.adverb, .qualifier, .passive, .complex, .hard, .vhard, .highlight-tone-low, .highlight-tone-med, .highlight-tone-high {
+    padding-top:0px;
+}
+
+.adverb {
+  background: #c4e3f3;
+  overflow-y: auto;
+}
+.qualifier {
+  background: #c4e3f3;
+  overflow-y: auto;
+}
+.passive {
+  background: #c4ed9d;
+  overflow-y: auto;
+}
+.complex {
+  background: #e3b7e8;
+  overflow-y: auto;
+}
+.hard {
+  background: #f7ecb5;
+  overflow-y: auto;
+}
+.vhard {
+  background: #e4b9b9;
+  overflow-y: auto;
+}
+
+.highlight-tone-low {
+  background: #eee;
+  overflow-y: auto;
+}
+.highlight-tone-med {
+  background: #ccc;
+  overflow-y: auto;
+}
+.highlight-tone-high {
+  background: #aaa;
+  overflow-y: auto;
+}
+
+#report .title {
+  font-weight: bold;
+}
+#report .btn-link {
+  padding: 0px;
+}
+
+#report .counter {
+  padding: 3% 3%;
+  border-radius: 8px;
+}
+#report .counter .num {
+  font-weight: bold;
+  color: #ccc;
+  background-color: rgba(0, 0, 0, 0.6);
+  padding: 0px 2px;
+}
