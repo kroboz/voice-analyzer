@@ -105,13 +105,13 @@ Analyzer.prototype.setup = function() {
 
   // report widgets
   $(this.reportSelector).append(`
-    <div class="accordion" id="report-widget">
-     <div class="card">
-      <div class="card-header" id="readability-header">
-        <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#readability" aria-expanded="true" aria-controls="readability">Readability</button>
-      </div>
 
-      <div id="readability" class="collapse show" aria-labelledby="readability-header" data-parent="#report-widget">
+    <div class="tab-content" id="report-widget">
+    <div class="tab-pane face active" role="tabpanel" aria-labelledby="default-header">
+    <p class="text-small"><em>Your report results will appear here after you sleect your analysis.</em></p></div>
+  <div class="tab-pane fade" id="readability" role="tabpanel" aria-labelledby="readabilty-header">
+<div class="card">
+  <h5 class="card-header">Readability</h5>
         <div class="card-body">
          <div id="grade" class="mb-1 grade"></div>  
          <div id="adverb" class="mb-1 adverb counter"></div>
@@ -120,55 +120,40 @@ Analyzer.prototype.setup = function() {
          <div id="hard" class="mb-1 hard counter"></div>
          <div id="vhard" class="mb-1 vhard counter"></div>
         </div>
+</div>
       </div>
-     </div><!--card-->
-     <div class="card">
-      <div class="card-header" id="vocab-header">
-        <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#vocab" aria-expanded="false" aria-controls="vocab">Vocabulary</button>
-      </div>
-      <div id="vocab" class="collapse" aria-labelledby="vocab-header" data-parent="#report-widget">
+<div class="tab-pane fade" id="vocab" role="tabpanel" aria-labelledby="vocab-header">
+          <div class="card">
+  <h5 class="card-header">Vocabulary</h5>
         <div class="card-body">
-          <div id='you-words' class=''></div>
+<div id='you-words' class=''></div>
           <div id='me-words' class=''></div>
-        </div>
-      </div>
-     </div><!--card-->
-     <div class="card">
-      <div class="card-header" id="tone-header">
-        <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#tone" aria-expanded="false" aria-controls="tone">Tone</button>
-      </div>
-      <div id="tone" class="collapse" aria-labelledby="tone-header" data-parent="#report-widget">
+</div>
+</div>
+</div>
+<div class="tab-pane fade" id="tone" role="tabpanel" aria-labelledby="tone-header">
+<div class="card">
+  <h5 class="card-header">Tone & Sentiment</h5>
         <div class="card-body">
-          <div id="sentiment"></div>
+            <div id="sentiment"></div>
           <div id="tone-report"></div>
+</div>
+</div>
         </div>
-      </div>
-     </div><!--card-->
-     <div class="card">
-      <div class="card-header" id="-header">
-        <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#cadence" aria-expanded="false" aria-controls="cadence">Cadence</button>
-      </div>
-      <div id="cadence" class="collapse" aria-labelledby="cadence-header" data-parent="#report-widget">
+<div class="tab-pane fade" id="cadence" role="tabpanel" aria-labelledby="cadence-header">
+<div class="card">
+  <h5 class="card-header">Cadence</h5>
         <div class="card-body">
           <div id='word-length' class=''></div>
           <canvas id="word-chart" width="150" height="100"></canvas>
           <div id='sentence-length' class=''></div>
           <canvas id="sentence-chart" width="150" height="100"></canvas>
           <div id='punctuation' class=''></div>
-        </div>
-      </div>
-     </div><!--card-->
-     <div class="card">
-      <div class="card-header" id="stylo-header">
-        <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#stylo" aria-expanded="false" aria-controls="stylo">Stylometry</button>
-      </div>
-      <div id="stylo" class="collapse" aria-labelledby="stylo-header" data-parent="#report-widget">
-        <div class="card-body">
-          <div id='stylo-score' class=''></div>
-        </div>
-      </div>
-     </div><!--card-->
-    </div><!--accordion-->
+</div>
+</div>
+    </div>
+    </div>
+ 
   `);
 }
 
@@ -612,11 +597,11 @@ Analyzer.prototype.report = function() {
     var puncReport = '';
     for (p in this.data.punctuation)
     {
-      puncReport += `<div><span class="text-monospace font-weight-bold pl-3">${p}</span> ${
+      puncReport += `<div class="text-small"><span class="font-weight-bold pl-3">${p}</span> ${
         Math.round(this.data.punctuation[p] / this.data.sentences * 100)
       }</div>`;
     }
-    $("#punctuation").show().html(`Punctuation per 100 sentences: 
+    $("#punctuation").show().html(`<p class="small-text" style="padding-top:20px;"><em>Punctuation per 100 sentences:</em></p> 
       ${puncReport}`);
 
     this.updateHistoChart(this.data.wordLenHisto, 
