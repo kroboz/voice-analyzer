@@ -101,59 +101,59 @@ function Analyzer2(cfg) {
 Analyzer2.prototype.setup = function() {
   // result underlay for showing highlights
   var id = this.selector.split("#").pop() + "-result";
+
   $(this.selector).parent().append("<div id='" + id + "'></div>");
 
   // report widgets
   $(this.reportSelector).append(`
 
-    <div class="tab-content" id="report-widget-sample">
-    <div class="tab-pane face active" role="tabpanel" aria-labelledby="default-header">
+     <div id="report-widget">
+    <div class="face active" role="tabpanel" aria-labelledby="default-header">
     <p class="text-small"><em>Your report results will appear here after you select your analysis.</em></p></div>
-  <div class="tab-pane fade readability-report" id="readability" role="tabpanel" aria-labelledby="readability-header">
+  <div id="readability" role="tabpanel" aria-labelledby="readability-header">
 <div class="card">
   <h5 class="card-header">Readability</h5>
         <div class="card-body">
-         <div id="grade" class="mb-1 grade"></div>  
-         <div id="adverb" class="mb-1 adverb counter"></div>
-         <div id="passive" class="mb-1 passive counter"></div>
-         <div id="complex" class="mb-1 complex counter"></div>
-         <div id="hard" class="mb-1 hard counter"></div>
-         <div id="vhard" class="mb-1 vhard counter"></div>
+         <div id="grade2" class="mb-1 grade"></div>
+         <div id="adverb2" class="mb-1 adverb counter"></div>
+         <div id="passive2" class="mb-1 passive counter"></div>
+         <div id="complex2" class="mb-1 complex counter"></div>
+         <div id="hard2" class="mb-1 hard counter"></div>
+         <div id="vhard2" class="mb-1 vhard counter"></div>
         </div>
 </div>
       </div>
-<div class="tab-pane fade vocab-report" id="vocab" role="tabpanel" aria-labelledby="vocab-header">
+<div class="vocab-report" id="vocab" role="tabpanel" aria-labelledby="vocab-header">
           <div class="card">
   <h5 class="card-header">Vocabulary</h5>
         <div class="card-body">
-<div id='you-words' class=''></div>
-          <div id='me-words' class=''></div>
-            <div id='word-length' class='text-small' style="padding-top:20px;"></div>
-          <canvas id="word-chart" width="150" height="100"></canvas>
+<div id='you-words2' class=''></div>
+          <div id='me-words2' class=''></div>
+            <div id='word-length2' class='text-small' style="padding-top:20px;"></div>
+          <canvas id="word-chart2" width="150" height="100"></canvas>
 </div>
 </div>
 </div>
-<div class="tab-pane fade tone-report" id="tone" role="tabpanel" aria-labelledby="tone-header">
+<div class="tone-report2" id="tone" role="tabpanel" aria-labelledby="tone-header">
 <div class="card">
   <h5 class="card-header">Tone & Sentiment</h5>
         <div class="card-body">
-            <div id="sentiment"></div>
-          <div id="tone-report"></div>
+            <div id="sentiment2"></div>
+          <div id="tone-report2"></div>
 </div>
 </div>
         </div>
-<div class="tab-pane fade cadence-report" id="cadence" role="tabpanel" aria-labelledby="cadence-header">
+<div class="cadence-report" id="cadence" role="tabpanel" aria-labelledby="cadence-header">
 <div class="card">
   <h5 class="card-header">Cadence</h5>
         <div class="card-body">
           <div id='sentence-length' class=''></div>
-          <canvas id="sentence-chart" width="150" height="100"></canvas>
-          <div id='punctuation' class=''></div>
+          <canvas id="sentence-chart2" width="150" height="100"></canvas>
+          <div id='punctuation2' class=''></div>
 </div>
 </div>
     </div>
     </div>
- 
 
   `);
 }
@@ -192,7 +192,7 @@ Analyzer2.prototype.reset = function() {
   }
 }
 
-Analyzer2.prototype.analyze2 = function() {
+Analyzer2.prototype.analyze = function() {
   ("use strict");
   this.reset();
   let paragraphs = $(this.selector).find("p").toArray();
@@ -238,7 +238,7 @@ Analyzer2.prototype.updateTone = function() {
     {
       aly.lastToneUpdate = aly.lastUpdate;
 
-      $("#tone-report").html("<em>Analyzing...</em>");
+      $("#tone-report2").html("<em>Analyzing...</em>");
 
       data = { text: $(aly.selector).text() };
       $.ajax({
@@ -292,10 +292,10 @@ Analyzer2.prototype.updateTone = function() {
           const d = new Date();
           html += `<div class="text-sm font-italic">Last updated: 
             ${ d.toLocaleString() }</div>`;
-          $("#tone-report").html(html);
+          $("#tone-report2").html(html);
 
           // highlight paragraphs with this tone on hover
-          $("#tone-report .tone-select").hover(function(e) {
+          $("#tone-report2 .tone-select").hover(function(e) {
             const toneId = $(this).data('tone-id');
             $("."+toneId+"-low").addClass('highlight-tone-low');
             $("."+toneId+"-med").addClass('highlight-tone-med');
@@ -336,7 +336,7 @@ Analyzer2.prototype.updateSentiment = function(text) {
 		}
 	}
 
-	$("#sentiment").html(`<div class="mb-2">
+	$("#sentiment2").html(`<div class="mb-2">
     <div class="font-weight-bold">Sentiment</div>
     ${sentiment}</div>`);
 }
@@ -530,68 +530,68 @@ Analyzer2.prototype.getYouWordCount = function(text) {
 }
 
 Analyzer2.prototype.report = function() {
-  $("#grade").show().html(`Grade ${this.data.grade}`);
+  $("#grade2").show().html(`Grade ${this.data.grade}`);
 
-  $("#adverb").hide();
+  $("#adverb2").hide();
   if (this.data.adverbs)
   {
-    $("#adverb").show().html(`<span class='num'>${
+    $("#adverb2").show().html(`<span class='num'>${
     this.data.adverbs
     }</span> adverb${this.data.adverbs > 1 ? "s" : ""}. Aim for ${Math.round(
       this.data.paragraphs / 3
     )} or fewer.`);
   }
 
-  $("#passive").hide();
+  $("#passive2").hide();
   if (this.data.passiveVoice)
   {
-    $("#passive").show().html(`<span class='num'>${this.data.passiveVoice}</span> use${
+    $("#passive2").show().html(`<span class='num'>${this.data.passiveVoice}</span> use${
       this.data.passiveVoice > 1 ? "s" : ""
     } of passive voice. Aim for ${Math.round(this.data.sentences / 5)} or fewer.`);
   }
 
-  $("#complex").hide();
+  $("#complex2").hide();
   if (this.data.complex)
   {
-    $("#complex").show().html(`<span class='num'>${this.data.complex}</span> phrase${
+    $("#complex2").show().html(`<span class='num'>${this.data.complex}</span> phrase${
       this.data.complex > 1 ? "s" : ""
     } could be simplified.`);
   }
 
-  $("#hard").hide();
+  $("#hard2").hide();
   if (this.data.hardSentences)
   {
-    $("#hard").show().html(`<span class='num'>${
+    $("#hard2").show().html(`<span class='num'>${
       this.data.hardSentences
     }</span> of ${this.data.sentences} sentence${
       this.data.sentences > 1 ? "s are" : " is"
     } hard to read.`);
   }
 
-  $("#vhard").hide();
+  $("#vhard2").hide();
   if (this.data.veryHardSentences)
   {
-    $("#vhard").show().html(`<span class='num'>${
+    $("#vhard2").show().html(`<span class='num'>${
       this.data.veryHardSentences
     }</span> of ${this.data.sentences} sentence${
       this.data.sentences > 1 ? "s are" : " is"
     } very hard to read.`);
   }
 
-  $("#you-words").html(`"You" words: ${
+  $("#you-words2").html(`"You" words: ${
     this.data.youWords
   }`);
-  $("#me-words").html(`"Me" words: ${
+  $("#me-words2").html(`"Me" words: ${
     this.data.meWords
   }`);
 
   if (this.data.letters)
   {
-    $("#word-length").show().html(`<span class='num'>
+    $("#word-length2").show().html(`<span class='num'>
       Average Word length: ${
       (this.data.letters / this.data.words).toFixed(2)
     } characters</span>`);
-    $("#sentence-length").show().html(`<span class='num'>
+    $("#sentence-length2").show().html(`<span class='num'>
       Sentence length: ${
       (this.data.words / this.data.sentences).toFixed(2)
     } words</p>`);
@@ -602,13 +602,13 @@ Analyzer2.prototype.report = function() {
         (this.data.punctuation[p] / this.data.sentences * 100).toFixed(2)
       }</div>`;
     }
-    $("#punctuation").show().html(`<p class="small-text" style="padding-top:20px;"><em>Punctuation per 100 sentences:</em></p> 
+    $("#punctuation2").show().html(`<p class="small-text" style="padding-top:20px;"><em>Punctuation per 100 sentences:</em></p>
       ${puncReport}`);
 
     this.updateHistoChart(this.data.wordLenHisto, 
-      'word-chart', 'num words');
+      'word-chart2', 'num words');
     this.updateHistoChart(this.data.sentenceLenHisto, 
-      'sentence-chart', 'num sentences');
+      'sentence-chart2', 'num sentences');
   }
 }
 
@@ -650,7 +650,7 @@ Analyzer2.prototype.getAdverbs = function(sentence) {
         lyWords[word.replace(/[^a-z0-9. ]/gi, "").toLowerCase()] === undefined
       ) {
         this.data.adverbs += 1;
-        return `<span class="adverb">${word}</span>`;
+        return `<span class="adverb2">${word}</span>`;
       } else {
         return word;
       }

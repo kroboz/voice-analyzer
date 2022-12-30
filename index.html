@@ -232,7 +232,8 @@
         var divmon1 = new DivMonitor({
             selector: "editor1",
             interval: 250,
-            onChange: function() {},
+            onChange: function() {
+            },
             onIntervalChange: function() {
                 analyzer1.analyze();
             }
@@ -241,7 +242,6 @@
         analyzer1.analyze();
 
 
-    <!-- Imported editor script for samples -->
         // make sure contents are always wrapped in <p/>
         $("#editor2").on("input", function() {
             var $editable = $(this);
@@ -272,18 +272,20 @@
             });
         });
 
-        var analyzer2 = new Analyzer({
+        var analyzer2 = new Analyzer2({
             selector: "#editor2",
             reportSelector: "#report2"
         });
         var divmon2 = new DivMonitor({
             selector: "editor2",
             interval: 250,
-            onChange: function() {},
+            onChange: function() {
+            },
             onIntervalChange: function() {
                 analyzer2.analyze();
             }
         });
+        analyzer2.analyze();
     </script>
         
     <!-- See https://www.textcompare.org/readability/flesch-kincaid-grade-level for sample -->
