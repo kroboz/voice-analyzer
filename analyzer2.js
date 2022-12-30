@@ -86,7 +86,7 @@ var Stats = {
 	}
 };
 
-function Analyzer(cfg) {
+function Analyzer2(cfg) {
   this.lastToneUpdate = null;
   this.lastUpdate = null;
   this.stylometryBusy = {};
@@ -98,7 +98,7 @@ function Analyzer(cfg) {
   this.reset();
 }
 
-Analyzer.prototype.setup = function() {
+Analyzer2.prototype.setup = function() {
   // result underlay for showing highlights
   var id = this.selector.split("#").pop() + "-result";
   $(this.selector).parent().append("<div id='" + id + "'></div>");
@@ -106,10 +106,10 @@ Analyzer.prototype.setup = function() {
   // report widgets
   $(this.reportSelector).append(`
 
-    <div id="report-widget">
-    <div class="face active" role="tabpanel" aria-labelledby="default-header">
+    <div class="tab-content" id="report-widget-sample">
+    <div class="tab-pane face active" role="tabpanel" aria-labelledby="default-header">
     <p class="text-small"><em>Your report results will appear here after you select your analysis.</em></p></div>
-  <div id="readability" role="tabpanel" aria-labelledby="readability-header">
+  <div class="tab-pane fade readability-report" id="readability" role="tabpanel" aria-labelledby="readability-header">
 <div class="card">
   <h5 class="card-header">Readability</h5>
         <div class="card-body">
@@ -122,7 +122,7 @@ Analyzer.prototype.setup = function() {
         </div>
 </div>
       </div>
-<div class="vocab-report" id="vocab" role="tabpanel" aria-labelledby="vocab-header">
+<div class="tab-pane fade vocab-report" id="vocab" role="tabpanel" aria-labelledby="vocab-header">
           <div class="card">
   <h5 class="card-header">Vocabulary</h5>
         <div class="card-body">
@@ -133,7 +133,7 @@ Analyzer.prototype.setup = function() {
 </div>
 </div>
 </div>
-<div class="tone-report" id="tone" role="tabpanel" aria-labelledby="tone-header">
+<div class="tab-pane fade tone-report" id="tone" role="tabpanel" aria-labelledby="tone-header">
 <div class="card">
   <h5 class="card-header">Tone & Sentiment</h5>
         <div class="card-body">
@@ -142,7 +142,7 @@ Analyzer.prototype.setup = function() {
 </div>
 </div>
         </div>
-<div class="cadence-report" id="cadence" role="tabpanel" aria-labelledby="cadence-header">
+<div class="tab-pane fade cadence-report" id="cadence" role="tabpanel" aria-labelledby="cadence-header">
 <div class="card">
   <h5 class="card-header">Cadence</h5>
         <div class="card-body">
@@ -158,7 +158,7 @@ Analyzer.prototype.setup = function() {
   `);
 }
 
-Analyzer.prototype.reset = function() {
+Analyzer2.prototype.reset = function() {
   this.data = {
     paragraphs: 0,
     sentences: 0,
@@ -192,7 +192,7 @@ Analyzer.prototype.reset = function() {
   }
 }
 
-Analyzer.prototype.analyze = function() {
+Analyzer2.prototype.analyze2 = function() {
   ("use strict");
   this.reset();
   let paragraphs = $(this.selector).find("p").toArray();
@@ -221,7 +221,7 @@ Analyzer.prototype.analyze = function() {
   this.lastUpdate = Date.now();
 }
 
-Analyzer.prototype.updateTone = function() {
+Analyzer2.prototype.updateTone = function() {
   let aly = this;
 
   setTimeout(function() {
@@ -318,7 +318,7 @@ Analyzer.prototype.updateTone = function() {
   }, 250);
 }
 
-Analyzer.prototype.updateSentiment = function(text) {
+Analyzer2.prototype.updateSentiment = function(text) {
 	var sentiment = "neutral";
 
 	if (text) 
@@ -352,7 +352,7 @@ function shuffle(a) {
   return a;
 }
 
-Analyzer.prototype.updateStylometry = function(model) {
+Analyzer2.prototype.updateStylometry = function(model) {
   let aly = this;
   let paragraphs = $(this.selector).find("p").toArray();
 
@@ -436,7 +436,7 @@ Analyzer.prototype.updateStylometry = function(model) {
   });
 }
 
-Analyzer.prototype.updateWordSentenceHistogram = function(sentence) {
+Analyzer2.prototype.updateWordSentenceHistogram = function(sentence) {
 	// collect word length stats
 	sentence.split(" ").map(word => {
     let wordLen = Math.min(word.length, 
@@ -449,7 +449,7 @@ Analyzer.prototype.updateWordSentenceHistogram = function(sentence) {
   this.data.sentenceLenHisto[sentenceLen]++;
 }
 
-Analyzer.prototype.processParagraph = function(p, idx) {
+Analyzer2.prototype.processParagraph = function(p, idx) {
   let sentences = this.getSentencesFromParagraph(p.text());
   if (!sentences)
     return p.html();
@@ -498,16 +498,16 @@ Analyzer.prototype.processParagraph = function(p, idx) {
   return hardOrNot.join(" ");
 }
 
-Analyzer.prototype.getSentencesFromParagraph = function(text) {
+Analyzer2.prototype.getSentencesFromParagraph = function(text) {
   text = text.replace(/[\n\r]/g, ''); // cleanup for easier regex
   return text.match(/[^\.!\?]+[\.!\?]+["'"”’]?|.+$/g);
 }
 
-Analyzer.prototype.getCharCount = function(regex, sentence) {
+Analyzer2.prototype.getCharCount = function(regex, sentence) {
  return (sentence.match(regex)||[]).length;
 }
 
-Analyzer.prototype.getMeWordCount = function(text) {
+Analyzer2.prototype.getMeWordCount = function(text) {
   text = text.replace(/["“‘”’]/g, "'");
   var words = text.split(" ");
   var count = 0;
@@ -518,7 +518,7 @@ Analyzer.prototype.getMeWordCount = function(text) {
   return count;
 }
 
-Analyzer.prototype.getYouWordCount = function(text) {
+Analyzer2.prototype.getYouWordCount = function(text) {
   text = text.replace(/["“‘”’]/g, "'");
   var words = text.split(" ");
   var count = 0;
@@ -529,7 +529,7 @@ Analyzer.prototype.getYouWordCount = function(text) {
   return count;
 }
 
-Analyzer.prototype.report = function() {
+Analyzer2.prototype.report = function() {
   $("#grade").show().html(`Grade ${this.data.grade}`);
 
   $("#adverb").hide();
@@ -612,7 +612,7 @@ Analyzer.prototype.report = function() {
   }
 }
 
-Analyzer.prototype.updateHistoChart = function(data, elId, label) {
+Analyzer2.prototype.updateHistoChart = function(data, elId, label) {
   var maxIdx = 0;
   for (var i=0; i < data.length; i++)
     if (data[i])
@@ -640,7 +640,7 @@ Analyzer.prototype.updateHistoChart = function(data, elId, label) {
   });
 }
 
-Analyzer.prototype.getAdverbs = function(sentence) {
+Analyzer2.prototype.getAdverbs = function(sentence) {
   let lyWords = this.getLyWords();
   return sentence
     .split(" ")
@@ -658,7 +658,7 @@ Analyzer.prototype.getAdverbs = function(sentence) {
     .join(" ");
 }
 
-Analyzer.prototype.getComplex = function(sentence) {
+Analyzer2.prototype.getComplex = function(sentence) {
   let words = this.getComplexWords();
   let wordList = Object.keys(words);
   wordList.forEach(key => {
@@ -667,7 +667,7 @@ Analyzer.prototype.getComplex = function(sentence) {
   return sentence;
 }
 
-Analyzer.prototype.getPassive = function(sent) {
+Analyzer2.prototype.getPassive = function(sent) {
   let originalWords = sent.split(" ");
   let words = sent
     .replace(/[^a-z0-9. ]/gi, "")
@@ -682,7 +682,7 @@ Analyzer.prototype.getPassive = function(sent) {
   return originalWords.join(" ");
 }
 
-Analyzer.prototype.getQualifier = function(sentence) {
+Analyzer2.prototype.getQualifier = function(sentence) {
   let qualifiers = this.getQualifyingWords();
   let wordList = Object.keys(qualifiers);
   wordList.forEach(key => {
@@ -691,7 +691,7 @@ Analyzer.prototype.getQualifier = function(sentence) {
   return sentence;
 }
 
-Analyzer.prototype.checkPrewords = function(words, originalWords, match) {
+Analyzer2.prototype.checkPrewords = function(words, originalWords, match) {
   let preWords = ["is", "are", "was", "were", "be", "been", "being"];
   let index = words.indexOf(match);
   if (preWords.indexOf(words[index - 1]) >= 0) {
@@ -710,7 +710,7 @@ Analyzer.prototype.checkPrewords = function(words, originalWords, match) {
   }
 }
 
-Analyzer.prototype.calculateLevel = function(letters, words, sentences) {
+Analyzer2.prototype.calculateLevel = function(letters, words, sentences) {
   if (words === 0 || sentences === 0) {
     return 0;
   }
@@ -720,7 +720,7 @@ Analyzer.prototype.calculateLevel = function(letters, words, sentences) {
   return level <= 0 ? 0 : level;
 }
 
-Analyzer.prototype.findAndSpan = function(sentence, string, type) {
+Analyzer2.prototype.findAndSpan = function(sentence, string, type) {
   let index = sentence.toLowerCase().indexOf(string);
   let a = { complex: "complex", qualifier: "adverbs" };
   if (index >= 0) {
@@ -749,7 +749,7 @@ Analyzer.prototype.findAndSpan = function(sentence, string, type) {
   return sentence;
 }
 
-Analyzer.prototype.computeHashCode = function(str) {
+Analyzer2.prototype.computeHashCode = function(str) {
   var cleanStr = str.trim();
   cleanStr = cleanStr.replace(/\W/g, '');
 
@@ -764,7 +764,7 @@ Analyzer.prototype.computeHashCode = function(str) {
 }
 
 
-Analyzer.prototype.getQualifyingWords = function() {
+Analyzer2.prototype.getQualifyingWords = function() {
   return {
     "i believe": 1,
     "i consider": 1,
@@ -806,7 +806,7 @@ Analyzer.prototype.getQualifyingWords = function() {
   };
 }
 
-Analyzer.prototype.getLyWords = function() {
+Analyzer2.prototype.getLyWords = function() {
   return {
     actually: 1,
     additionally: 1,
@@ -983,7 +983,7 @@ Analyzer.prototype.getLyWords = function() {
   };
 }
 
-Analyzer.prototype.getComplexWords = function() {
+Analyzer2.prototype.getComplexWords = function() {
   return {
     "a number of": ["many", "some"],
     abundance: ["enough", "plenty"],
@@ -1183,7 +1183,7 @@ Analyzer.prototype.getComplexWords = function() {
   };
 }
 
-Analyzer.prototype.getJustifierWords = function() {
+Analyzer2.prototype.getJustifierWords = function() {
   return {
     "i believe": 1,
     "i consider": 1,
