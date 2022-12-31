@@ -1,4 +1,4 @@
-Welcome! Open the index to see the demo.
+Welcome! Preview the demo here: https://kroboz.github.io/voice-analyzer/
 
 Known open issues: 
 
