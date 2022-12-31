@@ -26,13 +26,21 @@ $container-max-widths: (
 .yellow {
     color: #f9ad36;
 }
+
+.white {
+    color: #ffffff;
+}
+
 .blue {
     color: #1f375b;
 }
 
 .bg-blue {
     background-color: #1f375b;
-    color: #fff;
+}
+
+.bg-gray {
+    background-color: ##e8e8e8;
 }
 
 .bg-blue:link, .bg-blue:visited, bg-blue.li:link, bg-blue.li:visited {
