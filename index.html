@@ -66,6 +66,8 @@
   <path fill-rule="evenodd" d="M6.664 15.889A8 8 0 1 1 9.336.11a8 8 0 0 1-2.672 15.78zm-4.665-4.283A11.945 11.945 0 0 1 8 10c2.186 0 4.236.585 6.001 1.606a7 7 0 1 0-12.002 0z"/>
 </svg> Cadence</a>
             </li>
+            <li class="nav-item border border-primary rounded m-1">
+            <button id="highlight-button">Visualize Sentences</button></li>
         </ul>
 
         </section>
@@ -356,7 +358,75 @@ var chart = new Chart(ctx, {
 });
 </script>
     <!-- See https://www.textcompare.org/readability/flesch-kincaid-grade-level for sample -->
-    
+
+
+<!-- Toggle button for highlighting -->
+<script>
+let highlighted = false;  // flag variable to track the current state of the highlighting effect
+
+const button = document.querySelector("button");  // select the button element
+const divs = document.querySelectorAll("#editor1, #editor2");  // select the div elements
+
+button.addEventListener("click", () => {
+  if (highlighted) {
+    // remove the highlighting effect by setting the text content of the div elements to the original text
+    divs.forEach(div => {
+      div.innerHTML = div.dataset.originalHtml;
+    });
+  } else {
+    // apply the highlighting effect
+    divs.forEach(div => {
+      // get the text content of the div element
+      const text = div.textContent;
+      div.dataset.originalHtml = div.innerHTML;  // store the original HTML in a data attribute
+
+      // split the text into an array of paragraphs
+      const paragraphs = text.split("\n");
+
+      // clear the text content of the div element
+      div.textContent = "";
+
+      paragraphs.forEach((paragraph, paragraphIndex) => {
+        // create a new p element for each paragraph
+        const p = document.createElement("p");
+
+        // split the paragraph into an array of sentences using a modified regular expression as the delimiter
+        const sentences = paragraph.split(/[.!?][^\n]|[.!?]\s/);
+
+        sentences.forEach((sentence, sentenceIndex) => {
+          // create a new span element for each sentence
+          const span = document.createElement("span");
+
+          // set the background color of the span based on the index of the sentence
+          if ((paragraphIndex + sentenceIndex) % 2 === 0) {
+            span.style.backgroundColor = "#1f375b50";  // modified color
+          } else {
+            span.style.backgroundColor = "#f9ad3650";  // modified color
+          }
+
+          // set the text content of the span to be the sentence
+          span.textContent = sentence + ".";
+
+          // append the span to the p element
+          p.appendChild(span);
+        });
+
+        // check if the p element only contains a single span element with a single period
+        if (p.childNodes.length === 1 && p.firstChild.textContent === ".") {
+          // skip appending the p element if it meets the condition
+          return;
+        }
+
+        // append the p element to the div element
+        div.appendChild(p);
+      });
+    });
+  }
+
+  highlighted = !highlighted;  // toggle the value of the flag variable
+});
+
+    </script>   
 
  <hr>
                     <p>Keeping this here for later until we decide what to do with it.</p>
