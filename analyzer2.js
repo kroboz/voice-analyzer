@@ -101,7 +101,6 @@ function Analyzer2(cfg) {
 Analyzer2.prototype.setup = function() {
   // result underlay for showing highlights
   var id = this.selector.split("#").pop() + "-result";
-
   $(this.selector).parent().append("<div id='" + id + "'></div>");
 
   // report widgets

@@ -13,7 +13,6 @@
     <script src="analyzer.js"></script>
     <script src="analyzer2.js"></script>
     <script src="auth.js"></script>
-    <script src="Chart.min.js"></script>
     <script src="divChangeMonitor.js"></script>
     <script src="jquery-3.3.1.min.js"></script>
     <script src="polyfill.min.js"></script>
@@ -21,6 +20,8 @@
     <script src="showdown.min.js"></script>
     <script src="vaderSentiment.bundle.js"></script>
     <script src="readability.js"></script>
+        <script src="Chart.min.js"></script>
+
 
 
     <title>Writing analyzer</title>
@@ -76,18 +77,20 @@
                         
             <div class="col-lg-2 bg-white" style="padding-top:20px;">
                 <div class="p-3">
-                <h4 class="blue">Your Analysis:</h4>
+                <h4 class="blue">Analysis 1:</h4>
                 <hr>
                 <div id="report1"></div>
+                <canvas id="sentence-counts1" class="canvas"></canvas>
                 
             </div>
             </div><!-- Report column div -->
             
             <div class="col-lg-2 bg-white" style="padding-top:20px;">
                 <div class="p-3">
-                <h4 class="yellow">Sample Analysis:</h4>
+                <h4 class="yellow">Analysis 2:</h4>
                 <hr>
-                    <div id="report2"></div>
+                    <div id="report2"></div><br>
+                    <canvas id="sentence-counts2" class="canvas"></canvas>
                 </div>
             </div><!-- Reco column div -->
             
@@ -102,7 +105,6 @@
                                 <!-- First Column with User Input -->
                                 <div id="editor-wrapper">
                                     <div id="editor1" contenteditable="true" style="overflow-y:auto; padding:10px;">
-                                        <div id="text">
 
                                         <p style="color:#cccccc;">Paste some copy you'd like analyzed here.</p>
 
@@ -116,7 +118,6 @@
 
                                             <p>Paste in something you're working on and edit away. Or, click the Write button and compose something new.</p>
 
-                                        </div> <!-- text -->
                                     </div> <!-- editor -->
                                 </div>
                                 <!--editor-wrapper-->
@@ -130,8 +131,8 @@
                         <form>
                             <div class="mb-3">
                                 <!-- Second Column with User Input -->
-                                <div id="editor-wrapper-sample">
-                                    <div id="editor2" contenteditable="true" style="overflow-y:auto; padding:10px;">
+                                    <div id="editor2-wrapper">
+                                        <div id="editor2" contenteditable="true" style="padding:10px;">
 
                                         <p style="color:#cccccc;">Paste some client copy here. Use it as a sample to compare against your own voice and tone. Or, you can ignore/delete this.</p>
 
@@ -287,7 +288,73 @@
         });
         analyzer2.analyze();
     </script>
-        
+
+  <script src="sentence-length-chart1.js"></script>
+      <script src="sentence-length-chart2.js"></script>
+    
+<script>
+    // Get the div element with the ID "editor2"
+var editor1 = document.getElementById("editor2");
+
+// Get the text content of the div element
+var text = editor1.textContent;
+
+// Split the text into an array of sentences by splitting on the period, exclamation mark, and question mark characters
+var sentences = text.split(/[.!?]/);
+
+// Create an array to store the number of words in each sentence
+var wordCounts = [];
+
+// Create an array to store the labels for each bar in the chart
+var labels = [];
+
+// Loop through each sentence
+for (var i = 0; i < sentences.length; i++) {
+  // Get the current sentence
+  var sentence = sentences[i];
+
+  // Split the sentence into an array of words
+  var words = sentence.split(" ");
+
+  // Add the number of words in the sentence to the array
+  wordCounts.push(words.length);
+
+  // Add a label for the current bar in the chart
+  labels.push('Sentence ' + (i+1));
+}
+
+// Set up the data for the chart
+var data = {
+  labels: labels,
+  datasets: [{
+    label: 'Word Count',
+    data: wordCounts,
+    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+    borderColor: 'rgba(255, 99, 132, 1)
+  }]
+};
+
+// Set up the options for the chart
+var options = {
+  scales: {
+    yAxes: [{
+      ticks: {
+        beginAtZero: true
+      }
+    }]
+  }
+};
+
+// Get the canvas element where the chart will be drawn
+var ctx = document.getElementById('sentence-counts2').getContext('2d');
+
+// Create the chart using the Chart.min.js library
+var chart = new Chart(ctx, {
+  type: 'bar',
+  data: data,
+  options: options
+});
+</script>
     <!-- See https://www.textcompare.org/readability/flesch-kincaid-grade-level for sample -->
     
 
