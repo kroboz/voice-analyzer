@@ -100,8 +100,8 @@ function Analyzer2(cfg) {
 
 Analyzer2.prototype.setup = function() {
   // result underlay for showing highlights
-  var id = this.selector.split("#").pop() + "-result";
-  $(this.selector).parent().append("<div id='" + id + "'></div>");
+  //var id = this.selector.split("#").pop() + "-result";
+  //#$(this.selector).parent().append("<div id='" + id + "'></div>");
 
   // report widgets
   $(this.reportSelector).append(`
@@ -191,6 +191,96 @@ Analyzer2.prototype.reset = function() {
   }
 }
 
+// Credit to Liam (Stack Overflow)
+// https://stackoverflow.com/a/41034697/3480193
+class Cursor {
+    static getCurrentCursorPosition(parentElement) {
+        var selection = window.getSelection(),
+            charCount = -1,
+            node;
+
+        if (selection.focusNode) {
+            if (Cursor._isChildOf(selection.focusNode, parentElement)) {
+                node = selection.focusNode;
+                charCount = selection.focusOffset;
+
+                while (node) {
+                    if (node === parentElement) {
+                        break;
+                    }
+
+                    if (node.previousSibling) {
+                        node = node.previousSibling;
+                        charCount += node.textContent.length;
+                    } else {
+                        node = node.parentNode;
+                        if (node === null) {
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        return charCount;
+    }
+
+    static setCurrentCursorPosition(chars, element) {
+        if (chars >= 0) {
+            var selection = window.getSelection();
+
+            let range = Cursor._createRange(element, { count: chars });
+
+            if (range) {
+                range.collapse(false);
+                selection.removeAllRanges();
+                selection.addRange(range);
+            }
+        }
+    }
+
+    static _createRange(node, chars, range) {
+        if (!range) {
+            range = document.createRange()
+            range.selectNode(node);
+            range.setStart(node, 0);
+        }
+
+        if (chars.count === 0) {
+            range.setEnd(node, chars.count);
+        } else if (node && chars.count >0) {
+            if (node.nodeType === Node.TEXT_NODE) {
+                if (node.textContent.length < chars.count) {
+                    chars.count -= node.textContent.length;
+                } else {
+                    range.setEnd(node, chars.count);
+                    chars.count = 0;
+                }
+            } else {
+                for (var lp = 0; lp < node.childNodes.length; lp++) {
+                    range = Cursor._createRange(node.childNodes[lp], chars, range);
+
+                    if (chars.count === 0) {
+                    break;
+                    }
+                }
+            }
+        }
+
+        return range;
+    }
+
+    static _isChildOf(node, parentElement) {
+        while (node !== null) {
+            if (node === parentElement) {
+                return true;
+            }
+            node = node.parentNode;
+        }
+
+        return false;
+    }
+}
 Analyzer2.prototype.analyze = function() {
   ("use strict");
   this.reset();
@@ -200,7 +290,21 @@ Analyzer2.prototype.analyze = function() {
     (p, idx) => this.processParagraph($(p), idx));
   let resultPs = resultTextPs.map(
     (textp, idx) => `<p id="para-${idx}">${textp}</p>`);
-  $(this.selector + "-result").html(resultPs);
+
+  let  richText = document.getElementById('editor2');
+  let offset = Cursor.getCurrentCursorPosition(richText);
+  $(this.selector).html(resultPs);
+
+  //Add para to offset
+  let word = "para-";
+  let regex = new RegExp(word, "g");
+  let str = resultPs.join(" ").substring(0, offset);
+  let matches = str.match(regex);
+  let count = matches ? matches.length : 0;
+  Cursor.setCurrentCursorPosition(offset, richText);
+  richText.focus();
+
+
 
   this.data.grade = this.calculateLevel(
     this.data.letters/this.data.paragraphs, 
@@ -387,7 +491,6 @@ Analyzer2.prototype.updateStylometry = function(model) {
 
   if (samples.length == 0)
     return;
-  console.log(samples);
 
   var now = Date.now();
   aly.stylometryLastRequest[model] = now;

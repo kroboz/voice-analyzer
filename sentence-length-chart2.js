@@ -1,5 +1,9 @@
+var myBarChart2=null;
 // Define a function to create the chart
-function createChart() {
+function createChartSecond() {
+  if(myBarChart2!=null){
+        myBarChart2.destroy();
+    }
   // Get the div element with the ID "editor2"
   var editor1 = document.getElementById("editor2");
 
@@ -60,12 +64,10 @@ var sentences = text.split(/[.!?]/);
   var ctx = document.getElementById('sentence-counts2').getContext('2d');
 
   // Create the chart using the Chart.min.js library
-  var chart = new Chart(ctx, {
+  myBarChart2 = new Chart(ctx, {
     type: 'horizontalBar',
     data: data,
     options: options
   });
 }
 
-// Call the createChart function to display the chart
-createChart();

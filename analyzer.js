@@ -100,8 +100,8 @@ function Analyzer(cfg) {
 
 Analyzer.prototype.setup = function() {
   // result underlay for showing highlights
-  var id = this.selector.split("#").pop() + "-result";
-  $(this.selector).parent().append("<div id='" + id + "'></div>");
+  //var id = this.selector.split("#").pop() + "-result";
+  //$(this.selector).parent().append("<div id='" + id + "'></div>");
 
   // report widgets
   $(this.reportSelector).append(`
@@ -201,7 +201,7 @@ Analyzer.prototype.analyze = function() {
     (p, idx) => this.processParagraph($(p), idx));
   let resultPs = resultTextPs.map(
     (textp, idx) => `<p id="para-${idx}">${textp}</p>`);
-  $(this.selector + "-result").html(resultPs);
+  $(this.selector).html(resultPs);
 
   this.data.grade = this.calculateLevel(
     this.data.letters/this.data.paragraphs, 
@@ -388,7 +388,6 @@ Analyzer.prototype.updateStylometry = function(model) {
 
   if (samples.length == 0)
     return;
-  console.log(samples);
 
   var now = Date.now();
   aly.stylometryLastRequest[model] = now;

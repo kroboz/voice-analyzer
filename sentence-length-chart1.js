@@ -1,5 +1,9 @@
+var myBarChart=null;
 // Define a function to create the chart
-function createChart() {
+function createChartFirst() {
+  if(myBarChart!=null){
+        myBarChart.destroy();
+    }
   // Get the div element with the ID "editor1"
   var editor1 = document.getElementById("editor1");
 
@@ -29,6 +33,7 @@ var sentences = text.split(/[.!?]/);
     // Add a label for the current bar in the chart
     labels.push('Sentence ' + (i+1));
   }
+
 
   // Set up the data for the chart
   var data = {
@@ -60,12 +65,10 @@ var sentences = text.split(/[.!?]/);
   var ctx = document.getElementById('sentence-counts1').getContext('2d');
 
   // Create the chart using the Chart.min.js library
-  var chart = new Chart(ctx, {
+  myBarChart = new Chart(ctx, {
     type: 'horizontalBar',
     data: data,
     options: options
   });
 }
 
-// Call the createChart function to display the chart
-createChart();
