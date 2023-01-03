@@ -133,12 +133,13 @@ Analyzer.prototype.setup = function() {
 </div>
 </div>
 </div>
-<div class="tone-report" id="tone" role="tabpanel" aria-labelledby="tone-header">
+<div class="tone-report" id="tone" role="tabpanel" aria-labelledby="tone-sentiment">
 <div class="card">
   <h5 class="card-header">Tone & Sentiment</h5>
         <div class="card-body">
             <div id="sentiment"></div>
           <div id="tone-report"></div>
+            <div id="sentiment-results1"></div>
 </div>
 </div>
         </div>
@@ -157,6 +158,8 @@ Analyzer.prototype.setup = function() {
 
   `);
 }
+
+
 
 Analyzer.prototype.reset = function() {
   this.data = {
@@ -221,6 +224,18 @@ Analyzer.prototype.analyze = function() {
   this.lastUpdate = Date.now();
 }
 
+// Replace YOUR_API_KEY with your IBM Cloud API key
+const API_KEY = '_W3ZvzeF7N7xyP58_jNjMFJ7zCCZmEjKsvkFQfMCY3E8';
+
+// Replace YOUR_IBM_CLOUD_URL with your IBM Cloud URL
+const IBM_CLOUD_URL = 'https://api.au-syd.natural-language-understanding.watson.cloud.ibm.com/instances/18dbfed8-4322-415d-8af6-df8ec08eaa52';
+
+// Set up the request to the Watson API
+const request = new XMLHttpRequest();
+request.open('POST', IBM_CLOUD_URL + '/v1/analyze?version=2020-08-01');
+request.setRequestHeader('Content-Type', 'application/json');
+request.setRequestHeader('Authorization', 'Basic ' + btoa(API_KEY + ':'));
+
 Analyzer.prototype.updateTone = function() {
   let aly = this;
 
@@ -238,85 +253,91 @@ Analyzer.prototype.updateTone = function() {
     {
       aly.lastToneUpdate = aly.lastUpdate;
 
-      $("#tone-report").html("<em>Analyzing...</em>");
+      // Get the text from the selector element
+      const text = $(aly.selector).text();
 
-      data = { text: $(aly.selector).text() };
-      $.ajax({
-        url: "/tone",
-        type: "POST",
-        contentType: "application/json",
-        data: JSON.stringify(data),
-        success: function(data) {
-          //console.log(data);
-          
-          data.result.sentences_tone.forEach(function(r) {
-            const hash = aly.computeHashCode(r.text);
-            if (!(hash in aly.data.sentenceHash2Para))
-              return;
-
-            const paraIdx = aly.data.sentenceHash2Para[hash];
-            r.tone_categories.forEach(function(cat) {
-              cat.tones.forEach(function(tone) {
-                if (tone.score >= 0.4 && tone.score < 0.6)
-                  $("#para-" + paraIdx).addClass(tone.tone_id + "-low");
-                else if (tone.score >= 0.6 && tone.score < 0.8)
-                  $("#para-" + paraIdx).addClass(tone.tone_id + "-med");
-                else if (tone.score >= 0.8)
-                  $("#para-" + paraIdx).addClass(tone.tone_id + "-high");
-              });
-            });
-          });
-          
-          tones = {};
-          data.result.document_tone.tone_categories
-            .forEach(function(t) {
-              tones[t.category_name] = t.tones;
-            });
-
-          var html = '';
-          for (var n in tones) {
-            var list = '';
-            tones[n].forEach(function(t) {
-              list += `<div class="tone-select" data-tone-id="${t.tone_id}">
-                ${t.tone_name}: ${(t.score * 100).toFixed(2)}%</div>`;
-            });
-
-            const title = n.replace(' Tone', '');
-            html += `<div class="mb-2">
-              <div class="font-weight-bold">${title}</div>
-              ${list}
-            </div>`;
-          }
-
-          // last update stamp
-          const d = new Date();
-          html += `<div class="text-sm font-italic">Last updated: 
-            ${ d.toLocaleString() }</div>`;
-          $("#tone-report").html(html);
-
-          // highlight paragraphs with this tone on hover
-          $("#tone-report .tone-select").hover(function(e) {
-            const toneId = $(this).data('tone-id');
-            $("."+toneId+"-low").addClass('highlight-tone-low');
-            $("."+toneId+"-med").addClass('highlight-tone-med');
-            $("."+toneId+"-high").addClass('highlight-tone-high');
-
-          }, function(e) {
-            const toneId = $(this).data('tone-id');
-            $("."+toneId+"-low").removeClass('highlight-tone-low');
-            $("."+toneId+"-med").removeClass('highlight-tone-med');
-            $("."+toneId+"-high").removeClass('highlight-tone-high');
-          });
-        },
-        complete: function() {
-          aly.updateTone();
-        }
-      });
+// Set the parameters for the request
+const params = {
+  'text': text,
+  'features': {
+    'sentiment': {
+      'targets': [],
+    },
+    'emotion': {},
+    'language': {},
+      'keywords': {
+          "sentiment": true,
+          "emotion": true,
+          "limit": 5
+      }
+  },
+};
+      // Send the request
+      request.send(JSON.stringify(params));
     }
-    else
-      aly.updateTone();
-  }, 250);
-}
+  }, 0);
+};
+
+// Handle the response
+request.onload = function () {
+  if (request.status === 200) {
+    // Parse the response
+    const response = JSON.parse(request.response);
+      console.log(response);
+console.log(tones);
+console.log(html);
+
+
+    // Get the document-level tone from the response
+    const documentTone = response.tone.document_tone;
+
+    tones = {};
+    documentTone.tone_categories
+      .forEach(function(t) {
+        tones[t.category_name] = t.tones;
+      });
+
+    var html = '';
+    for (var n in tones) {
+      var list = '';
+      tones[n].forEach(function(t) {
+        list += `<div class="tone-select" data-tone-id="${t.tone_id}">
+          ${t.tone_name}: ${(t.score * 100).toFixed(2)}%</div>`;
+      });
+
+      const title = n.replace(' Tone', '');
+      html += `<div class="mb-2">
+        <div class="font-weight-bold">${title}</div>
+        ${list}
+      </div>`;
+    }
+
+    // last update stamp
+    const d = new Date();
+    html += `<div class="text-sm font-italic">Last updated: 
+      ${ d.toLocaleString() }</div>`;
+    $("#tone-report").html(html);
+
+    // highlight paragraphs with this tone on hover
+    $("#tone-report .tone-select").hover(function(e) {
+      const toneId = $(this).data('tone-id');
+      $("."+toneId+"-low").addClass('highlight-tone-low');
+      $("."+toneId+"-med").addClass('highlight-tone-med');
+      $("."+toneId+"-high").addClass('highlight-tone-high');
+
+    }, function(e) {
+      const toneId = $(this).data('tone-id');
+      $("."+toneId+"-low").removeClass('highlight-tone-low');
+      $("."+toneId+"-med").removeClass('highlight-tone-med');
+      $("."+toneId+"-high").removeClass('highlight-tone-high');
+    });
+  } else {
+    console.error('An error occurred:', request.statusText);
+  }
+};
+ 
+      
+      
 
 Analyzer.prototype.updateSentiment = function(text) {
 	var sentiment = "neutral";

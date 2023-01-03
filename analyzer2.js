@@ -133,7 +133,7 @@ Analyzer2.prototype.setup = function() {
 </div>
 </div>
 </div>
-<div class="tone-report2" id="tone" role="tabpanel" aria-labelledby="tone-header">
+<div class="tone-report2" id="tone" role="tabpanel" aria-labelledby="tone-sentiment">
 <div class="card">
   <h5 class="card-header">Tone & Sentiment</h5>
         <div class="card-body">

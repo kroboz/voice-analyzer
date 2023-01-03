@@ -97,3 +97,59 @@
     </div>
     </div>
  
+
+IBM Watson stuff 
+// You will also need to sign up for an IBM Cloud account and obtain an API key for the Watson NLU service. Once you have an API key, you can use the following code to classify the sentiment of a piece of text using the Watson NLU API:
+
+
+$.ajax({
+  url: "https://api.us-south.natural-language-understanding.watson.cloud.ibm.com/instances/<instance_id>/v1/analyze",
+  type: "POST",
+  headers: {
+    "Content-Type": "application/json",
+    "Authorization": "Bearer <api_key>"
+  },
+  data: JSON.stringify({
+    "text": "<text_to_analyze>",
+    "features": {
+      "sentiment": {}
+    }
+  }),
+  success: function(response) {
+    console.log(response);
+  }
+});
+            // old instance _W3ZvzeF7N7xyP58_jNjMFJ7zCCZmEjKsvkFQfMCY3E8
+// url https://api.au-syd.natural-language-understanding.watson.cloud.ibm.com/instances/18dbfed8-4322-415d-8af6-df8ec08eaa52
+      
+// Replace <instance_id> and <api_key> with your Watson NLU instance ID and API key, respectively, and replace <text_to_analyze> with the text you want to analyze. The response returned by the API will contain the sentiment analysis results.
+
+// To insert the API response on the front-end of your web page, you can use the jQuery .html() function to update the contents of an HTML element with the response returned by the API. For example, if you want to display the sentiment analysis results in a <div> element with the ID "sentiment-results", you can use the following code:
+
+$.ajax({
+  // API request code here...
+  success: function(response) {
+    $("#sentiment-results").html(response.sentiment.document.label);
+  }
+});
+
+// This will update the contents of the <div> element with the sentiment label returned by the API (e.g. "positive", "neutral", or "negative"). You can also use the .text() function to set the text content of an element, or you can use the .append() function to add the response to the end of the element's existing content.
+
+// You can also use the response to dynamically update other parts of your web page, such as the style or layout of the page. For example, you could use the .css() function to change the background color of the page based on the sentiment of the text:
+      
+$.ajax({
+  // API request code here...
+  success: function(response) {
+    if (response.sentiment.document.label == "positive") {
+      $("body").css("background-color", "lightgreen");
+    } else if (response.sentiment.document.label == "negative") {
+      $("body").css("background-color", "pink");
+    }
+  }
+});
+
+// This will change the background color of the page to light green if the sentiment is positive, or pink if the sentiment is negative.
+
+      // watson API key IL9uaI65Z1arpXfI8gTKvT2brWVoOFrKBEf9fei4zIv-
+      // old instance _W3ZvzeF7N7xyP58_jNjMFJ7zCCZmEjKsvkFQfMCY3E8
+// url https://api.au-syd.natural-language-understanding.watson.cloud.ibm.com/instances/18dbfed8-4322-415d-8af6-df8ec08eaa52
