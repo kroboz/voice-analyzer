@@ -139,6 +139,7 @@ Analyzer2.prototype.setup = function() {
         <div class="card-body">
             <div id="sentiment2"></div>
           <div id="tone-report2"></div>
+          <div id="sentiment-results2"></div>
 </div>
 </div>
         </div>
