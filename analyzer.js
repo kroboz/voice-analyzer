@@ -257,19 +257,20 @@ Analyzer.prototype.updateTone = function() {
       const text = $(aly.selector).text();
 
 // Set the parameters for the request
-const params = {
+const analyzeParams = {
   'text': text,
   'features': {
+      'emotion': {
+          "targets": []
+      },
     'sentiment': {
       'targets': [],
     },
-    'emotion': {},
-    'language': {},
       'keywords': {
           "sentiment": true,
           "emotion": true,
           "limit": 5
-      }
+      },
   },
 };
       // Send the request
