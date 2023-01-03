@@ -24,6 +24,12 @@ success: (data) => {
   // Get the sentiment score from the response
   const sentimentScore = payload.sentiment.document.score;
   const sentimentLabel = payload.sentiment.document.label;
+  const emotionSadness = payload.emotion.document.emotion.sadness.score;
+  const emotionJoy = payload.emotion.document.emotion.joy.score;
+  const emotionFear = payload.emotion.document.emotion.fear.score;
+  const emotionDisgust = payload.emotion.document.emotion.disgust.score;
+  const emotionAnger = payload.emotion.document.emotion.anger.score;
+
   // Set the sentiment score in the results div
   document.querySelector(`#${resultElementId}`).innerText = sentimentScore;
   
@@ -32,6 +38,13 @@ success: (data) => {
       <b>Category:</b> Sentiment<br>
       <b>Score:</b> ${sentimentScore}<br>
       <b>Result:</b> ${sentimentLabel}<br>
+<b>&nbsp;</b><br>
+<b>Emotion:</b> Score<br>
+<b>Sadness:</b> ${emotionSadness}</br> 
+<b>Joy:</b> ${emotionJoy}</br>
+<b>Fear:</b> ${emotionFear}</br>
+<b>Disgust:</b> ${emotionDisgust}</br>
+<b>Anger:</b> ${emotionAnger}</br>
     </div>
   `;
 
@@ -61,9 +74,15 @@ function initiateAnalysis() {
       }
   });
   getAnalysis('sentiment-results2', {
-      text: text2,
+      text: text1,
       features: {
-          sentiment: {}
+          emotion: {},
+          sentiment: {},
+          keywords: {
+              sentiment: true,
+              emotion: true,
+              limit: 5,
+          }
       }
   });
 
@@ -77,4 +96,5 @@ document.addEventListener('DOMContentLoaded', function () {
   initiateAnalysis();
   
 });
+
 
