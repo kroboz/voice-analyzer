@@ -16,6 +16,7 @@ function getAnalysis(resultElementId, params) {
       'Authorization': `Basic ${btoa('apiKey:' + API_KEY)}`, // Basic " + btoa(API_KEY + ':'),
       'Content-Type': 'application/json'
     },
+
 success: (data) => {
   console.log('RAM: Success:', data);
   // Assign the response data to the payload variable
@@ -30,12 +31,11 @@ success: (data) => {
     <div>
       <b>Category:</b> Sentiment<br>
       <b>Score:</b> ${sentimentScore}<br>
-      <b>Label:</b> ${sentimentLabel}<br>
-      <b>Mixed:</b> ${sentimentMixed}
+      <b>Result:</b> ${sentimentLabel}<br>
     </div>
   `;
 
-  $('#sentiment-results1').append(html);
+  $(`#${resultElementId}`).append(html);
 },
     error: (err) => {
       console.log(err);
@@ -48,11 +48,26 @@ function initiateAnalysis() {
   // Get the text from the editor1 div
   const text1 = document.querySelector('#editor1').innerText; // document.getElementById('editor1').innerText;
   const text2 = document.querySelector('#editor2').innerText;
-  
-  getAnalysis('sentiment-results1', { text: text1, features: { sentiment: {} }});
-  getAnalysis('sentiment-results2', { text: text2, features: { sentiment: {} }});
-  
-}
+  getAnalysis('sentiment-results1', {
+      text: text1,
+      features: {
+          emotion: {},
+          sentiment: {},
+          keywords: {
+              sentiment: true,
+              emotion: true,
+              limit: 5,
+          }
+      }
+  });
+  getAnalysis('sentiment-results2', {
+      text: text2,
+      features: {
+          sentiment: {}
+      }
+  });
+
+  }
 
 document.addEventListener('DOMContentLoaded', function () {
   
