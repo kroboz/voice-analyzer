@@ -16,13 +16,26 @@ function getAnalysis(resultElementId, params) {
       'Authorization': `Basic ${btoa('apiKey:' + API_KEY)}`, // Basic " + btoa(API_KEY + ':'),
       'Content-Type': 'application/json'
     },
-    success: (data) => {
-      console.log('RAM: Success:', data);
-      // Get the sentiment score from the response
-      const sentimentScore = data.sentiment.document.score;
-      // Set the sentiment score in the results div
-      document.querySelector(`#${resultElementId}`).innerText = sentimentScore;
-    },
+success: (data) => {
+  console.log('RAM: Success:', data);
+  // Assign the response data to the payload variable
+  const payload = data;
+  // Get the sentiment score from the response
+  const sentimentScore = payload.sentiment.document.score;
+  // Set the sentiment score in the results div
+  document.querySelector(`#${resultElementId}`).innerText = sentimentScore;
+  
+  const html = `
+    <div>
+      <b>Category:</b> Sentiment<br>
+      <b>Score:</b> ${sentimentScore}<br>
+      <b>Label:</b> ${sentimentLabel}<br>
+      <b>Mixed:</b> ${sentimentMixed}
+    </div>
+  `;
+
+  $('#sentiment-results1').append(html);
+},
     error: (err) => {
       console.log(err);
     }
