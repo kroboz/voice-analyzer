@@ -38,7 +38,7 @@ success: (data) => {
       <b>Tone:</b> ${sentimentLabel}<br>
       <b>Tone score:</b> ${sentimentScore}<br>
 <b>&nbsp;</b><br>
-<b>Emotional Sentiment</b><br>
+<b>Emotional Sentiment</b></br>
 <b>Sadness:</b> ${emotionSadness}</br> 
 <b>Joy:</b> ${emotionJoy}</br>
 <b>Fear:</b> ${emotionFear}</br>
