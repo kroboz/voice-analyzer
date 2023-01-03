@@ -22,6 +22,7 @@ success: (data) => {
   const payload = data;
   // Get the sentiment score from the response
   const sentimentScore = payload.sentiment.document.score;
+  const sentimentLabel = payload.sentiment.document.label;
   // Set the sentiment score in the results div
   document.querySelector(`#${resultElementId}`).innerText = sentimentScore;
   
