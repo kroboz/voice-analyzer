@@ -137,8 +137,6 @@ Analyzer.prototype.setup = function() {
 <div class="card">
   <h5 class="card-header">Tone & Sentiment</h5>
         <div class="card-body">
-            <div id="sentiment"></div>
-          <div id="tone-report"></div>
             <div id="sentiment-results1"></div>
 </div>
 </div>

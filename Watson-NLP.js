@@ -22,24 +22,23 @@ success: (data) => {
   // Assign the response data to the payload variable
   const payload = data;
   // Get the sentiment score from the response
-  const sentimentScore = payload.sentiment.document.score;
+  const sentimentScore = (payload.sentiment.document.score.toFixed(2))*100;
   const sentimentLabel = payload.sentiment.document.label;
-  const emotionSadness = payload.emotion.document.emotion.sadness.score;
-  const emotionJoy = payload.emotion.document.emotion.joy.score;
-  const emotionFear = payload.emotion.document.emotion.fear.score;
-  const emotionDisgust = payload.emotion.document.emotion.disgust.score;
-  const emotionAnger = payload.emotion.document.emotion.anger.score;
+  const emotionSadness = (payload.emotion.document.emotion.sadness.toFixed(2))*100;
+  const emotionJoy = (payload.emotion.document.emotion.joy.toFixed(2))*100;
+  const emotionFear = (payload.emotion.document.emotion.fear.toFixed(2))*100;
+  const emotionDisgust = (payload.emotion.document.emotion.disgust.toFixed(2))*100;
+  const emotionAnger = (payload.emotion.document.emotion.anger.toFixed(2))*100;
 
   // Set the sentiment score in the results div
   document.querySelector(`#${resultElementId}`).innerText = sentimentScore;
   
   const html = `
     <div>
-      <b>Category:</b> Sentiment<br>
-      <b>Score:</b> ${sentimentScore}<br>
-      <b>Result:</b> ${sentimentLabel}<br>
+      <b>Tone:</b> ${sentimentLabel}<br>
+      <b>Tone score:</b> ${sentimentScore}<br>
 <b>&nbsp;</b><br>
-<b>Emotion:</b> Score<br>
+<b>Emotional Sentiment</b>
 <b>Sadness:</b> ${emotionSadness}</br> 
 <b>Joy:</b> ${emotionJoy}</br>
 <b>Fear:</b> ${emotionFear}</br>

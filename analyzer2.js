@@ -137,8 +137,6 @@ Analyzer2.prototype.setup = function() {
 <div class="card">
   <h5 class="card-header">Tone & Sentiment</h5>
         <div class="card-body">
-            <div id="sentiment2"></div>
-          <div id="tone-report2"></div>
           <div id="sentiment-results2"></div>
 </div>
 </div>
@@ -147,7 +145,7 @@ Analyzer2.prototype.setup = function() {
 <div class="card">
   <h5 class="card-header">Cadence</h5>
         <div class="card-body">
-          <div id='sentence-length' class=''></div>
+          <div id='sentence-length2' class=''></div>
           <canvas id="sentence-chart2" width="150" height="100"></canvas>
           <div id='punctuation2' class=''></div>
 </div>
@@ -164,11 +162,11 @@ Analyzer2.prototype.reset = function() {
     sentences: 0,
     sentenceLenHisto: [],
     sentenceHash2Para: {},
-    words: 0,
+    words2: 0,
     wordLenHisto: [],
     youWords: 0,
     meWords: 0,
-    letters: 0,
+    letters2: 0,
     punctuation: {
       ',': 0,
       "’": 0,
@@ -308,8 +306,8 @@ Analyzer2.prototype.analyze = function() {
 
 
   this.data.grade = this.calculateLevel(
-    this.data.letters/this.data.paragraphs, 
-    this.data.words/this.data.paragraphs, 
+    this.data.letters2/this.data.paragraphs, 
+    this.data.words2/this.data.paragraphs, 
     this.data.sentences/this.data.paragraphs);
 
   this.report();
@@ -568,10 +566,10 @@ Analyzer2.prototype.processParagraph = function(p, idx) {
   let hardOrNot = sentences.map(sent => {
     let cleanSentence = sent.replace(/[^a-z0-9.?! ]/gi, "");
     this.updateWordSentenceHistogram(cleanSentence);
-    let words = cleanSentence.split(" ").length;
-    let letters = cleanSentence.split(" ").join("").length;
-    this.data.words += words;
-    this.data.letters += letters;
+    let words2 = cleanSentence.split(" ").length;
+    let letters2 = cleanSentence.split(" ").join("").length;
+    this.data.words2 += words2;
+    this.data.letters2 += letters2;
     this.data.punctuation[','] += this.getCharCount(/[,]/g, sent);
     this.data.punctuation["’"] += this.getCharCount(/['’]/g, sent);
     this.data.punctuation['?'] += this.getCharCount(/[?]/g, sent);
@@ -584,8 +582,8 @@ Analyzer2.prototype.processParagraph = function(p, idx) {
     sent = this.getComplex(sent);
     sent = this.getPassive(sent);
     sent = this.getQualifier(sent);
-    let level = this.calculateLevel(letters, words, 1);
-    if (words < 14) {
+    let level = this.calculateLevel(letters2, words2, 1);
+    if (words2 < 14) {
       return sent;
     } else if (level >= 10 && level < 14) {
       this.data.hardSentences += 1;
@@ -612,22 +610,22 @@ Analyzer2.prototype.getCharCount = function(regex, sentence) {
 
 Analyzer2.prototype.getMeWordCount = function(text) {
   text = text.replace(/["“‘”’]/g, "'");
-  var words = text.split(" ");
+  var words2 = text.split(" ");
   var count = 0;
   var matchWords = ["i", "i'd", "i'm", "i'll", "i've", "me", "my", "myself", "mine", "us", "we", "we're", "we'll", "we've", "our", "ours"];
-  for (var wi=0; wi < words.length; wi++)
-    if (matchWords.indexOf(words[wi].toLowerCase()) != -1)
+  for (var wi=0; wi < words2.length; wi++)
+    if (matchWords.indexOf(words2[wi].toLowerCase()) != -1)
       count++;
   return count;
 }
 
 Analyzer2.prototype.getYouWordCount = function(text) {
   text = text.replace(/["“‘”’]/g, "'");
-  var words = text.split(" ");
+  var words2 = text.split(" ");
   var count = 0;
   var matchWords = ["you", "your", "you'll", "you're", "you've", "yours"];
-  for (var wi=0; wi < words.length; wi++)
-    if (matchWords.indexOf(words[wi].toLowerCase()) != -1)
+  for (var wi=0; wi < words2.length; wi++)
+    if (matchWords.indexOf(words2[wi].toLowerCase()) != -1)
       count++;
   return count;
 }
@@ -688,15 +686,15 @@ Analyzer2.prototype.report = function() {
     this.data.meWords
   }`);
 
-  if (this.data.letters)
+  if (this.data.letters2)
   {
     $("#word-length2").show().html(`<span class='num'>
       Average Word length: ${
-      (this.data.letters / this.data.words).toFixed(2)
+      (this.data.letters2 / this.data.words2).toFixed(2)
     } characters</span>`);
     $("#sentence-length2").show().html(`<span class='num'>
       Sentence length: ${
-      (this.data.words / this.data.sentences).toFixed(2)
+      (this.data.words2 / this.data.sentences).toFixed(2)
     } words</p>`);
     var puncReport = '';
     for (p in this.data.punctuation)
@@ -762,8 +760,8 @@ Analyzer2.prototype.getAdverbs = function(sentence) {
 }
 
 Analyzer2.prototype.getComplex = function(sentence) {
-  let words = this.getComplexWords();
-  let wordList = Object.keys(words);
+  let words2 = this.getComplexWords();
+  let wordList = Object.keys(words2);
   wordList.forEach(key => {
     sentence = this.findAndSpan(sentence, key, "complex");
   });
@@ -772,14 +770,14 @@ Analyzer2.prototype.getComplex = function(sentence) {
 
 Analyzer2.prototype.getPassive = function(sent) {
   let originalWords = sent.split(" ");
-  let words = sent
+  let words2 = sent
     .replace(/[^a-z0-9. ]/gi, "")
     .toLowerCase()
     .split(" ");
-  let ed = words.filter(word => word.match(/(ed|en|wn)$/));
+  let ed = words2.filter(word => word.match(/(ed|en|wn)$/));
   if (ed.length > 0) {
     ed.forEach(match => {
-      originalWords = this.checkPrewords(words, originalWords, match);
+      originalWords = this.checkPrewords(words2, originalWords, match);
     });
   }
   return originalWords.join(" ");
@@ -794,16 +792,16 @@ Analyzer2.prototype.getQualifier = function(sentence) {
   return sentence;
 }
 
-Analyzer2.prototype.checkPrewords = function(words, originalWords, match) {
+Analyzer2.prototype.checkPrewords = function(words2, originalWords, match) {
   let preWords = ["is", "are", "was", "were", "be", "been", "being"];
-  let index = words.indexOf(match);
-  if (preWords.indexOf(words[index - 1]) >= 0) {
+  let index = words2.indexOf(match);
+  if (preWords.indexOf(words2[index - 1]) >= 0) {
     this.data.passiveVoice += 1;
     originalWords[index - 1] =
       '<span class="passive">' + originalWords[index - 1];
     originalWords[index] = originalWords[index] + "</span>";
     let next = this.checkPrewords(
-      words.slice(index + 1),
+      words2.slice(index + 1),
       originalWords.slice(index + 1),
       match
     );
@@ -813,12 +811,12 @@ Analyzer2.prototype.checkPrewords = function(words, originalWords, match) {
   }
 }
 
-Analyzer2.prototype.calculateLevel = function(letters, words, sentences) {
-  if (words === 0 || sentences === 0) {
+Analyzer2.prototype.calculateLevel = function(letters2, words2, sentences) {
+  if (words2 === 0 || sentences === 0) {
     return 0;
   }
   let level = Math.round(
-    4.71 * (letters / words) + 0.5 * words / sentences - 21.43
+    4.71 * (letters2 / words2) + 0.5 * words2 / sentences - 21.43
   );
   return level <= 0 ? 0 : level;
 }
