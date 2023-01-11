@@ -272,7 +272,7 @@ const analyzeParams = {
   },
 };
       // Send the request
-      request.send(JSON.stringify(params));
+      request.send(JSON.stringify(analyzeParams));
     }
   }, 0);
 };
@@ -335,8 +335,16 @@ console.log(html);
   }
 };
  
-      
-      
+
+// Display punctuation Names
+const punctuationNames = {
+  ',': 'Commas',
+  "’": 'Apostrophes',
+  '?': 'Question Marks',
+  '!': 'Exclamation Points',
+  '-': 'Hyphens',
+  '(': 'Parenthesis'
+}      
 
 Analyzer.prototype.updateSentiment = function(text) {
 	var sentiment = "neutral";
@@ -617,9 +625,10 @@ Analyzer.prototype.report = function() {
     var puncReport = '';
     for (p in this.data.punctuation)
     {
-      puncReport += `<div class="text-small"><span class="font-weight-bold pl-3">${p}</span> ${
-        (this.data.punctuation[p] / this.data.sentences * 100).toFixed(2)
-      }</div>`;
+        let name = punctuationNames[p] || "Not Found";
+puncReport += `<div class="text-small"><span class="font-weight-bold pl-3"><b>${name}:</b> </span> ${
+    (this.data.punctuation[p] / this.data.sentences * 100).toFixed(2)
+  }</div>`;
     }
     $("#punctuation").show().html(`<p class="small-text" style="padding-top:20px;"><em>Punctuation per 100 sentences:</em></p> 
       ${puncReport}`);

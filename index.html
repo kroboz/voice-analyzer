@@ -11,18 +11,20 @@
     <link rel="stylesheet" type="text/css" href="main.css">
 
     <!--Required Scripts-->
-    <script src="jquery-3.6.0.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
     <script src="analyzer.js"></script>
     <script src="analyzer2.js"></script>
     <script src="auth.js"></script>
     <script src="divChangeMonitor.js"></script>
-    <script src="polyfill.min.js"></script>
-    <script src="popper.min.js"></script>
-    <script src="showdown.min.js"></script>
     <script src="vaderSentiment.bundle.js"></script>
     <script src="readability.js"></script>
     <script src="Chart.min.js"></script>
     <script src="Watson-NLP.js"></script>
+
+    <script src="https://cdn.polyfill.io/v2/polyfill.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.3.1.min.js" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/1.9.0/showdown.min.js"></script>
 
 
     <script src="sentence-length-chart1.js"></script>
@@ -48,7 +50,7 @@
 
         <!-- Buttons to process the above input fields -->
         <button class="btn btn-outline-primary m-1 rounded" id="readability-header" data-toggle="tab"
-            data-target=".readability-report" role="tab" aria-controls="home" aria-selected="true"
+            data-bs-target="readability-toggle" role="tab" aria-controls="readability-toggle" aria-selected="true"
             data-bs-toggle="button"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                 class="bi bi-book" viewBox="0 0 16 16">
                 <path
@@ -90,6 +92,7 @@
                     <div class="p-3">
                         <h4 class="blue">Analysis 1:</h4>
                         <hr>
+                        <div id="editor1-gradelevel"></div>
                         <div id="report1"></div>
                         <canvas id="sentence-counts1" class="canvas"></canvas>
 
@@ -106,8 +109,14 @@
                         <canvas id="sentence-counts2" class="canvas"></canvas>
                     </div>
                 </div><!-- Reco column div -->
-            </div>
+                    <div class="collapse multi-collapse" id="readability-toggle">
+                        Readability info here
+                    </div>
+                    <div class="collapse multi-collapse" id="vocabulary-toggle">
+Mor ereadability info
 
+                </div>
+</div>
             <div class="row col-lg-8 justify-content-center p-4 bg-gray" style="max-width: 900px; margin-left:20px;">
                 <div class="row col-lg-12 bg-white border shadow p-4 d-flex-row mb-2">
                     <!--Paper container for editors -->

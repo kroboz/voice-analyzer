@@ -158,8 +158,8 @@ Analyzer2.prototype.setup = function() {
 
 Analyzer2.prototype.reset = function() {
   this.data = {
-    paragraphs: 0,
-    sentences: 0,
+    paragraphs2: 0,
+    sentences2: 0,
     sentenceLenHisto: [],
     sentenceHash2Para: {},
     words2: 0,
@@ -175,14 +175,22 @@ Analyzer2.prototype.reset = function() {
       '-': 0,
       '(': 0
     },
-    hardSentences: 0,
-    veryHardSentences: 0,
+    hardsentences2: 0,
+    veryHardsentences2: 0,
     adverbs: 0,
     passiveVoice: 0,
     complex: 0,
     grade: 0
   };
-
+    
+const punctuationLabels = {
+  ',': 'Commas',
+  "’": 'Apostrophes',
+  '?': 'Question Marks',
+  '!': 'Exclamation Points',
+  '-': 'Hyphens',
+  '(': 'Parentheses'
+}
   for (var i=0; i < 100; i++)
   {
     this.data.sentenceLenHisto.push(0);
@@ -283,9 +291,9 @@ class Cursor {
 Analyzer2.prototype.analyze = function() {
   ("use strict");
   this.reset();
-  let paragraphs = $(this.selector).find("p").toArray();
-  this.data.paragraphs = paragraphs.length;
-  let resultTextPs = paragraphs.map(
+  let paragraphs2 = $(this.selector).find("p").toArray();
+  this.data.paragraphs2 = paragraphs2.length;
+  let resultTextPs = paragraphs2.map(
     (p, idx) => this.processParagraph($(p), idx));
   let resultPs = resultTextPs.map(
     (textp, idx) => `<p id="para-${idx}">${textp}</p>`);
@@ -306,9 +314,9 @@ Analyzer2.prototype.analyze = function() {
 
 
   this.data.grade = this.calculateLevel(
-    this.data.letters2/this.data.paragraphs, 
-    this.data.words2/this.data.paragraphs, 
-    this.data.sentences/this.data.paragraphs);
+    this.data.letters2/this.data.paragraphs2, 
+    this.data.words2/this.data.paragraphs2, 
+    this.data.sentences2/this.data.paragraphs2);
 
   this.report();
   this.updateTone();
@@ -351,7 +359,7 @@ Analyzer2.prototype.updateTone = function() {
         success: function(data) {
           //console.log(data);
           
-          data.result.sentences_tone.forEach(function(r) {
+          data.result.sentences2_tone.forEach(function(r) {
             const hash = aly.computeHashCode(r.text);
             if (!(hash in aly.data.sentenceHash2Para))
               return;
@@ -396,7 +404,7 @@ Analyzer2.prototype.updateTone = function() {
             ${ d.toLocaleString() }</div>`;
           $("#tone-report2").html(html);
 
-          // highlight paragraphs with this tone on hover
+          // highlight paragraphs2 with this tone on hover
           $("#tone-report2 .tone-select").hover(function(e) {
             const toneId = $(this).data('tone-id');
             $("."+toneId+"-low").addClass('highlight-tone-low');
@@ -456,25 +464,25 @@ function shuffle(a) {
 
 Analyzer2.prototype.updateStylometry = function(model) {
   let aly = this;
-  let paragraphs = $(this.selector).find("p").toArray();
+  let paragraphs2 = $(this.selector).find("p").toArray();
 
   var text = "";
-  paragraphs.forEach(function(p) {
+  paragraphs2.forEach(function(p) {
     text += $(p).text() + "\n";
   });
   //console.log(text);
-  var sentences = text.match(/[^\r\n]+/g);
-  if (!sentences)
+  var sentences2 = text.match(/[^\r\n]+/g);
+  if (!sentences2)
     return;
-  //console.log(sentences);
-  shuffle(sentences);
+  //console.log(sentences2);
+  shuffle(sentences2);
   var samples = [];
-  for (var i=0; i < 10 && sentences.length; i++)
+  for (var i=0; i < 10 && sentences2.length; i++)
   {
     var sample = "";
-    for (var j=0; j < 1 && sentences.length; j++)
+    for (var j=0; j < 1 && sentences2.length; j++)
     {
-      var sentence = sentences.pop().trim();
+      var sentence = sentences2.pop().trim();
 
       if (sample != "")
         sample += " ";
@@ -503,7 +511,7 @@ Analyzer2.prototype.updateStylometry = function(model) {
     $("#stylo-score").append(`<div id="stylo-score-${model}"></div>`);
       
   $(modelSelector).html(`<em>Analyzing ${model}...</em>`);
-  var data = { model: model, sentences: samples };
+  var data = { model: model, sentences2: samples };
   $.ajax({
     url: "/stylo",
     type: "POST",
@@ -551,19 +559,19 @@ Analyzer2.prototype.updateWordSentenceHistogram = function(sentence) {
 }
 
 Analyzer2.prototype.processParagraph = function(p, idx) {
-  let sentences = this.getSentencesFromParagraph(p.text());
-  if (!sentences)
+  let sentences2 = this.getsentences2FromParagraph(p.text());
+  if (!sentences2)
     return p.html();
 
   // hash sentence to para idx
   var aly = this;
-  sentences.forEach(function(sent) {
+  sentences2.forEach(function(sent) {
     const hash = aly.computeHashCode(sent);
     aly.data.sentenceHash2Para[hash] = idx;
   });
 
-  this.data.sentences += sentences.length;
-  let hardOrNot = sentences.map(sent => {
+  this.data.sentences2 += sentences2.length;
+  let hardOrNot = sentences2.map(sent => {
     let cleanSentence = sent.replace(/[^a-z0-9.?! ]/gi, "");
     this.updateWordSentenceHistogram(cleanSentence);
     let words2 = cleanSentence.split(" ").length;
@@ -586,10 +594,10 @@ Analyzer2.prototype.processParagraph = function(p, idx) {
     if (words2 < 14) {
       return sent;
     } else if (level >= 10 && level < 14) {
-      this.data.hardSentences += 1;
+      this.data.hardsentences2 += 1;
       return `<span class="hard">${sent}</span>`;
     } else if (level >= 14) {
-      this.data.veryHardSentences += 1;
+      this.data.veryHardsentences2 += 1;
       return `<span class="vhard">${sent}</span>`;
     } 
 
@@ -599,7 +607,7 @@ Analyzer2.prototype.processParagraph = function(p, idx) {
   return hardOrNot.join(" ");
 }
 
-Analyzer2.prototype.getSentencesFromParagraph = function(text) {
+Analyzer2.prototype.getsentences2FromParagraph = function(text) {
   text = text.replace(/[\n\r]/g, ''); // cleanup for easier regex
   return text.match(/[^\.!\?]+[\.!\?]+["'"”’]?|.+$/g);
 }
@@ -639,7 +647,7 @@ Analyzer2.prototype.report = function() {
     $("#adverb2").show().html(`<span class='num'>${
     this.data.adverbs
     }</span> adverb${this.data.adverbs > 1 ? "s" : ""}. Aim for ${Math.round(
-      this.data.paragraphs / 3
+      this.data.paragraphs2 / 3
     )} or fewer.`);
   }
 
@@ -648,7 +656,7 @@ Analyzer2.prototype.report = function() {
   {
     $("#passive2").show().html(`<span class='num'>${this.data.passiveVoice}</span> use${
       this.data.passiveVoice > 1 ? "s" : ""
-    } of passive voice. Aim for ${Math.round(this.data.sentences / 5)} or fewer.`);
+    } of passive voice. Aim for ${Math.round(this.data.sentences2 / 5)} or fewer.`);
   }
 
   $("#complex2").hide();
@@ -660,22 +668,22 @@ Analyzer2.prototype.report = function() {
   }
 
   $("#hard2").hide();
-  if (this.data.hardSentences)
+  if (this.data.hardsentences2)
   {
     $("#hard2").show().html(`<span class='num'>${
-      this.data.hardSentences
-    }</span> of ${this.data.sentences} sentence${
-      this.data.sentences > 1 ? "s are" : " is"
+      this.data.hardsentences2
+    }</span> of ${this.data.sentences2} sentence${
+      this.data.sentences2 > 1 ? "s are" : " is"
     } hard to read.`);
   }
 
   $("#vhard2").hide();
-  if (this.data.veryHardSentences)
+  if (this.data.veryHardsentences2)
   {
     $("#vhard2").show().html(`<span class='num'>${
-      this.data.veryHardSentences
-    }</span> of ${this.data.sentences} sentence${
-      this.data.sentences > 1 ? "s are" : " is"
+      this.data.veryHardsentences2
+    }</span> of ${this.data.sentences2} sentence${
+      this.data.sentences2 > 1 ? "s are" : " is"
     } very hard to read.`);
   }
 
@@ -694,22 +702,23 @@ Analyzer2.prototype.report = function() {
     } characters</span>`);
     $("#sentence-length2").show().html(`<span class='num'>
       Sentence length: ${
-      (this.data.words2 / this.data.sentences).toFixed(2)
+      (this.data.words2 / this.data.sentences2).toFixed(2)
     } words</p>`);
     var puncReport = '';
     for (p in this.data.punctuation)
     {
-      puncReport += `<div class="text-small"><span class="font-weight-bold pl-3">${p}</span> ${
-        (this.data.punctuation[p] / this.data.sentences * 100).toFixed(2)
+        let name = punctuationNames[p] || "Not Found";
+puncReport += `<div class="text-small"><span class="font-weight-bold pl-3"><b>${name}:</b> </span> ${
+        (this.data.punctuation[p] / this.data.sentences2 * 100).toFixed(2)
       }</div>`;
     }
-    $("#punctuation2").show().html(`<p class="small-text" style="padding-top:20px;"><em>Punctuation per 100 sentences:</em></p>
+    $("#punctuation2").show().html(`<p class="small-text" style="padding-top:20px;"><em>Punctuation per 100 sentences2:</em></p>
       ${puncReport}`);
 
     this.updateHistoChart(this.data.wordLenHisto, 
-      'word-chart2', 'num words');
+      'word-chart2', 'num words2');
     this.updateHistoChart(this.data.sentenceLenHisto, 
-      'sentence-chart2', 'num sentences');
+      'sentence-chart2', 'num sentences2');
   }
 }
 
@@ -811,12 +820,12 @@ Analyzer2.prototype.checkPrewords = function(words2, originalWords, match) {
   }
 }
 
-Analyzer2.prototype.calculateLevel = function(letters2, words2, sentences) {
-  if (words2 === 0 || sentences === 0) {
+Analyzer2.prototype.calculateLevel = function(letters2, words2, sentences2) {
+  if (words2 === 0 || sentences2 === 0) {
     return 0;
   }
   let level = Math.round(
-    4.71 * (letters2 / words2) + 0.5 * words2 / sentences - 21.43
+    4.71 * (letters2 / words2) + 0.5 * words2 / sentences2 - 21.43
   );
   return level <= 0 ? 0 : level;
 }

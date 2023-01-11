@@ -31,7 +31,7 @@ success: (data) => {
   const emotionAnger = (payload.emotion.document.emotion.anger.toFixed(2))*100;
 
   // Set the sentiment score in the results div
-  document.querySelector(`#${resultElementId}`).innerText = sentimentScore;
+  document.querySelector(`#${resultElementId}`);
   
   const html = `
     <div>
@@ -73,7 +73,7 @@ function initiateAnalysis() {
       }
   });
   getAnalysis('sentiment-results2', {
-      text: text1,
+      text: text2,
       features: {
           emotion: {},
           sentiment: {},
