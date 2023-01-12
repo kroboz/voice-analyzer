@@ -19,8 +19,8 @@ var sentences = text.split(/[.!?]/);
   // Create an array to store the labels for each bar in the chart
   var labels = [];
 
-  // Loop through each sentence
-  for (var i = 0; i < sentences.length; i++) {
+   // Loop through each sentence
+   for (var i = 0; i < sentences.length; i++) {
     // Get the current sentence
     var sentence = sentences[i];
 
@@ -34,12 +34,17 @@ var sentences = text.split(/[.!?]/);
     labels.push('Sentence ' + (i+1));
   }
 
+  // Get the number of items in the chart
+  var numItems = wordCounts.length;
+
+  // Calculate the desired height of the chart
+  var chartHeight = numItems * 30;
 
   // Set up the data for the chart
   var data = {
-    labels: wordCounts,
+    labels: labels,
     datasets: [{
-      label: 'Word Count',
+      label: 'Words/sentence',
       data: wordCounts,
       backgroundColor: 'rgba(255, 99, 132, 0.2)',
       borderColor: 'rgba(255, 99, 132, 1)',
@@ -54,13 +59,20 @@ var sentences = text.split(/[.!?]/);
     maintainAspectRatio: false,
     responsive: true,
     scales: {
-      xAxes: [{
+      yAxes: [{
         ticks: {
           beginAtZero: true
         }
       }],
-    }
+    },
+    // Set the height of the chart
+    height: chartHeight
   };
+  
+
+  document.getElementById("chart-container").style.height = chartHeight + "px";
+
+
   // Get the canvas element where the chart will be drawn
   var ctx = document.getElementById('sentence-counts1').getContext('2d');
 

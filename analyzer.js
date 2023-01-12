@@ -204,10 +204,15 @@ Analyzer.prototype.analyze = function() {
     (textp, idx) => `<p id="para-${idx}">${textp}</p>`);
   $(this.selector).html(resultPs);
 
+    
   this.data.grade = this.calculateLevel(
     this.data.letters/this.data.paragraphs, 
     this.data.words/this.data.paragraphs, 
     this.data.sentences/this.data.paragraphs);
+    
+    console.dir(this.data.letters/this.data.paragraphs)
+     console.dir(this.data.words/this.data.paragraphs)
+     console.dir(this.data.sentences/this.data.paragraphs)
 
   this.report();
   this.updateTone();
@@ -342,7 +347,7 @@ const punctuationNames = {
   "’": 'Apostrophes',
   '?': 'Question Marks',
   '!': 'Exclamation Points',
-  '-': 'Hyphens',
+  '-': 'Hyphen',
   '(': 'Parenthesis'
 }      
 
@@ -509,6 +514,7 @@ Analyzer.prototype.processParagraph = function(p, idx) {
     sent = this.getPassive(sent);
     sent = this.getQualifier(sent);
     let level = this.calculateLevel(letters, words, 1);
+
     if (words < 14) {
       return sent;
     } else if (level >= 10 && level < 14) {
@@ -739,12 +745,14 @@ Analyzer.prototype.checkPrewords = function(words, originalWords, match) {
 }
 
 Analyzer.prototype.calculateLevel = function(letters, words, sentences) {
+    console.dir({letters, words, sentences})
   if (words === 0 || sentences === 0) {
     return 0;
   }
   let level = Math.round(
     4.71 * (letters / words) + 0.5 * words / sentences - 21.43
   );
+    console.dir({level})
   return level <= 0 ? 0 : level;
 }
 

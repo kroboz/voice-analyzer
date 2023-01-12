@@ -87,6 +87,7 @@
     <div class="container-fluid justify-content-center d-flex-row">
         <div class="row justify-content-center p-0" style="background-color:#e8e8e8;">
             <div class="col-lg-4 justify-content-end d-flex bg-white">
+                <div class="row">
 
                 <div class="col-lg-6" style="padding-top:20px;">
                     <div class="p-3">
@@ -116,6 +117,7 @@
 Mor ereadability info
 
                 </div>
+            </div>
 </div>
             <div class="row col-lg-8 justify-content-center p-4 bg-gray" style="max-width: 900px; margin-left:20px;">
                 <div class="row col-lg-12 bg-white border shadow p-4 d-flex-row mb-2">
@@ -396,8 +398,6 @@ Mor ereadability info
                         console.log("sentences from cadence " + sentences);
                         sentences.forEach((sentence, sentenceIndex) => {
                             // create a new span element for each sentence
-
-
                             const span = document.createElement("span");
 
                             // set the background color of the span based on the index of the sentence

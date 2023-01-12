@@ -5,13 +5,16 @@ function createChartSecond() {
         myBarChart2.destroy();
     }
   // Get the div element with the ID "editor2"
-  var editor1 = document.getElementById("editor2");
+  var editor2 = document.getElementById("editor2");
 
   // Get the text content of the div element
   var text = editor2.textContent;
 
   // Split the text into an array of sentences by splitting on the period, exclamation mark, and question mark characters
-var sentences = text.split(/[.!?]/);
+  var sentences = text.split(/[.!?]/);
+
+  // filter out any empty sentences
+sentences = sentences.filter(s => s.trim().length > 0);
 
   // Create an array to store the number of words in each sentence
   var wordCounts = [];
@@ -30,15 +33,21 @@ var sentences = text.split(/[.!?]/);
     // Add the number of words in the sentence to the array
     wordCounts.push(words.length);
 
+  // Get the number of items in the chart
+  var numItems = wordCounts.length;
+
+// Calculate the desired height of the chart
+var chartHeight = numItems * 30;
+
     // Add a label for the current bar in the chart
     labels.push('Sentence ' + (i+1));
   }
 
   // Set up the data for the chart
   var data = {
-    labels: wordCounts,
+    labels: labels,
     datasets: [{
-      label: 'Word Count',
+      label: 'Words/Sentence',
       data: wordCounts,
       backgroundColor: 'rgba(255, 99, 132, 0.2)',
       borderColor: 'rgba(255, 99, 132, 1)',
@@ -58,8 +67,14 @@ var sentences = text.split(/[.!?]/);
           beginAtZero: true
         }
       }],
-    }
+    },
+        // Set the height of the chart
+        height: chartHeight
   };
+
+  document.getElementById("chart-container2").style.height = chartHeight + "px";
+
+
   // Get the canvas element where the chart will be drawn
   var ctx = document.getElementById('sentence-counts2').getContext('2d');
 

@@ -46,7 +46,7 @@ success: (data) => {
 <b>Anger:</b> ${emotionAnger}</br>
     </div>
   `;
-
+  $(`#${resultElementId}`).empty();
   $(`#${resultElementId}`).append(html);
 },
     error: (err) => {
