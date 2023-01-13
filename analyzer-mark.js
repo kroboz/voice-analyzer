@@ -107,42 +107,57 @@ Analyzer.prototype.setup = function () {
   //$(this.selector).parent().append("<div id='" + id + "'></div>");
 
   // report widgets
+  $(this.reportSelector).append(`
 
-  $("#readability-report1").append(`
- <div id="readability" role="tabpanel" aria-labelledby="readability-header" style="padding:20px;">
-         <div class="card-body">
-          <div id="grade" class="mb-1 grade"></div>  
-          <div id="adverb" class="mb-1 adverb counter"></div>
-          <div id="passive" class="mb-1 passive counter"></div>
-          <div id="complex" class="mb-1 complex counter"></div>
-          <div id="hard" class="mb-1 hard counter"></div>
-          <div id="vhard" class="mb-1 vhard counter"></div>
-         </div>
-       </div>
-`);
-  $("#vocab-report1").append(`
-  <div class="vocab-report" id="vocab" role="tabpanel" aria-labelledby="vocab-header" style="padding:20px;">
+    <div id="report-widget">
+    <div class="face active" role="tabpanel" aria-labelledby="default-header">
+    <p class="text-small"><em>Your report results will appear here after you select your analysis.</em></p></div>
+  <div id="readability" role="tabpanel" aria-labelledby="readability-header">
+<div class="card">
+  <h5 class="card-header">Readability</h5>
+        <div class="card-body">
+         <div id="grade" class="mb-1 grade"></div>  
+         <div id="adverb" class="mb-1 adverb counter"></div>
+         <div id="passive" class="mb-1 passive counter"></div>
+         <div id="complex" class="mb-1 complex counter"></div>
+         <div id="hard" class="mb-1 hard counter"></div>
+         <div id="vhard" class="mb-1 vhard counter"></div>
+        </div>
+</div>
+      </div>
+<div class="vocab-report" id="vocab" role="tabpanel" aria-labelledby="vocab-header">
+          <div class="card">
+  <h5 class="card-header">Vocabulary</h5>
+        <div class="card-body">
 <div id='you-words' class=''></div>
           <div id='me-words' class=''></div>
             <div id='word-length' class='text-small' style="padding-top:20px;"></div>
           <canvas id="word-chart" width="150" height="100"></canvas>
 </div>
-`);
-
-  $("#tone-report1").append(`
-<div class="tone-report" id="tone" role="tabpanel" aria-labelledby="tone-sentiment" style="padding:20px;">
+</div>
+</div>
+<div class="tone-report" id="tone" role="tabpanel" aria-labelledby="tone-sentiment">
+<div class="card">
+  <h5 class="card-header">Tone & Sentiment</h5>
+        <div class="card-body">
             <div id="sentiment-results1"></div>
+</div>
+</div>
         </div>
-`);
-
-  $("#cadence-report1").append(`
-<div class="cadence-report" id="cadence" role="tabpanel" aria-labelledby="cadence-header" style="padding:20px;">
+<div class="cadence-report" id="cadence" role="tabpanel" aria-labelledby="cadence-header">
+<div class="card">
+  <h5 class="card-header">Cadence</h5>
+        <div class="card-body">
           <div id='sentence-length' class=''></div>
           <canvas id="sentence-chart" width="150" height="100"></canvas>
           <div id='punctuation' class=''></div>
+</div>
+</div>
     </div>
     </div>
-    `);
+ 
+
+  `);
 };
 
 Analyzer.prototype.reset = function () {

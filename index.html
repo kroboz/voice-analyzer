@@ -12,8 +12,8 @@
 
     <!--Required Scripts-->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
-    <script src="analyzer.js"></script>
-    <script src="analyzer2.js"></script>
+    <script src="analyzer-alt.js"></script>
+    <script src="analyzer2-alt.js"></script>
     <script src="auth.js"></script>
     <script src="divChangeMonitor.js"></script>
     <script src="vaderSentiment.bundle.js"></script>
@@ -22,13 +22,18 @@
     <script src="Watson-NLP.js"></script>
 
     <script src="https://cdn.polyfill.io/v2/polyfill.min.js"></script>
-<script src="https://code.jquery.com/jquery-3.3.1.min.js" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/1.9.0/showdown.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/1.9.0/showdown.min.js"></script>
 
 
     <script src="sentence-length-chart1.js"></script>
     <script src="sentence-length-chart2.js"></script>
+    <script>var collapseElementList = [].slice.call(document.querySelectorAll('.collapse'))
+        var collapseList = collapseElementList.map(function (collapseEl) {
+          return new bootstrap.Collapse(collapseEl)
+        })</script>
 
     <title>Verbatim Voice Tool</title>
 </head>
@@ -38,7 +43,10 @@
     <nav class="navbar">
         <div class="container justify-content-center">
             <a class="navbar-brand" href="#" style="color:#1f375b;">
-                <h1 style="padding-top: 1.3em; font-size: 48px;"><img src="assets/brand/verbatim-logo.png" alt="" height="100"> Verbatim Voice Tool <span style="font-size: 14px; rotate: -20deg; position: relative; bottom: -1.3em; left: -3.5em;">BETA</span></h1>
+                <h1 style="padding-top: 1.3em; font-size: 48px;"><img src="assets/brand/verbatim-logo.png" alt=""
+                        height="100"> Verbatim Voice Tool <span
+                        style="font-size: 14px; rotate: -20deg; position: relative; bottom: -1.3em; left: -3.5em;">BETA</span>
+                </h1>
             </a>
         </div>
 
@@ -49,29 +57,15 @@
     <div class="container-fluid justify-content-center bg-white border-bottom p-3 d-flex">
 
         <!-- Buttons to process the above input fields -->
-        <button class="btn btn-outline-primary m-1 rounded" id="readability-header" data-toggle="tab"
-            data-bs-target="readability-toggle" role="tab" aria-controls="readability-toggle" aria-selected="true"
-            data-bs-toggle="button"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                class="bi bi-book" viewBox="0 0 16 16">
-                <path
-                    d="M1 2.828c.885-.37 2.154-.769 3.388-.893 1.33-.134 2.458.063 3.112.752v9.746c-.935-.53-2.12-.603-3.213-.493-1.18.12-2.37.461-3.287.811V2.828zm7.5-.141c.654-.689 1.782-.886 3.112-.752 1.234.124 2.503.523 3.388.893v9.923c-.918-.35-2.107-.692-3.287-.81-1.094-.111-2.278-.039-3.213.492V2.687zM8 1.783C7.015.936 5.587.81 4.287.94c-1.514.153-3.042.672-3.994 1.105A.5.5 0 0 0 0 2.5v11a.5.5 0 0 0 .707.455c.882-.4 2.303-.881 3.68-1.02 1.409-.142 2.59.087 3.223.877a.5.5 0 0 0 .78 0c.633-.79 1.814-1.019 3.222-.877 1.378.139 2.8.62 3.681 1.02A.5.5 0 0 0 16 13.5v-11a.5.5 0 0 0-.293-.455c-.952-.433-2.48-.952-3.994-1.105C10.413.809 8.985.936 8 1.783z" />
-            </svg> Readability</button>
+        <button class="btn btn-outline-primary m-1 rounded btn-link" type="button" data-toggle="collapse" data-target=".all-collapse" aria-expanded="false" aria-controls="Readability-Toggle" id="all-collapse-button">Show/Hide All Reports</button>
 
-        <button class="btn btn-outline-primary m-1 rounded" id="vocab-header" data-toggle="tab"
-            data-target=".vocab-report" role="tab" aria-controls="vocab vocab-sample" aria-selected="false"
-            data-bs-toggle="button"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                class="bi bi-list-check" viewBox="0 0 16 16">
-                <path fill-rule="evenodd"
-                    d="M5 11.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zM3.854 2.146a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 1 1 .708-.708L2 3.293l1.146-1.147a.5.5 0 0 1 .708 0zm0 4a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 1 1 .708-.708L2 7.293l1.146-1.147a.5.5 0 0 1 .708 0zm0 4a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 0 1 .708-.708l.146.147 1.146-1.147a.5.5 0 0 1 .708 0z" />
-            </svg> Vocabulary</button>
+        <button class="btn btn-outline-primary m-1 rounded btn-link" type="button" data-toggle="collapse" data-target="#Readability-Toggle" aria-expanded="false" aria-controls="Readability-Toggle" id="readability-button">Readability</button>
 
-        <button class="btn btn-outline-primary m-1 rounded" id="tone-sentiment" data-toggle="tab"
-            data-target=".tone-report" role="tab" aria-controls="tone tone-sample" aria-selected="false"
-            data-bs-toggle="button"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                class="bi bi-ear" viewBox="0 0 16 16">
-                <path
-                    d="M8.5 1A4.5 4.5 0 0 0 4 5.5v7.047a2.453 2.453 0 0 0 4.75.861l.512-1.363a5.553 5.553 0 0 1 .816-1.46l2.008-2.581A4.34 4.34 0 0 0 8.66 1H8.5ZM3 5.5A5.5 5.5 0 0 1 8.5 0h.16a5.34 5.34 0 0 1 4.215 8.618l-2.008 2.581a4.555 4.555 0 0 0-.67 1.197l-.51 1.363A3.453 3.453 0 0 1 3 12.547V5.5ZM8.5 4A1.5 1.5 0 0 0 7 5.5v2.695c.112-.06.223-.123.332-.192.327-.208.577-.44.72-.727a.5.5 0 1 1 .895.448c-.256.513-.673.865-1.079 1.123A8.538 8.538 0 0 1 7 9.313V11.5a.5.5 0 0 1-1 0v-6a2.5 2.5 0 0 1 5 0V6a.5.5 0 0 1-1 0v-.5A1.5 1.5 0 0 0 8.5 4Z" />
-            </svg> Tone/Sentiment</button>
+        <button class="btn btn-outline-primary m-1 rounded btn-link" type="button" data-toggle="collapse" data-target="#Vocabulary-Toggle" aria-expanded="false" aria-controls="Vocabulary-Toggle" id="vocabulary-button">Vocabulary</button>
+
+        <button class="btn btn-outline-primary m-1 rounded btn-link" type="button" data-toggle="collapse" data-target="#Tone-Toggle" aria-expanded="false" aria-controls="Tone-Toggle" id="tone-sentiment">Tone & Sentiment</button>
+
+        <button class="btn btn-outline-primary m-1 rounded btn-link" type="button" data-toggle="collapse" data-target="#Cadence-Toggle" aria-expanded="false" aria-controls="Cadence-Toggle" id="cadence-button">Cadence (Report)</button>
 
         <button class="btn btn-outline-primary m-1 rounded" id="cadence-highlight" data-toggle="tab"
             data-target=".cadence-report" role="tab" aria-controls="cadence cadence-sample" aria-selected="false"
@@ -86,164 +80,239 @@
 
     <div class="container-fluid justify-content-center d-flex-row">
         <div class="row justify-content-center p-0" style="background-color:#e8e8e8;">
-            <div class="col-lg-4 justify-content-end d-flex bg-white">
-                <div class="row">
+            <div class="col-lg-4 bg-white">
+                <div class="row p-0">
+                    <div style="margin-top:20px" class="p-0">
+                        <p align="center"><em>Click a button to view a report.</em></p>
+                    </div>
+                    <div class="col-lg-6" style="padding-top:0px;">
+                        <div class="p-3">
+                            <h4 class="blue">Analysis 1:</h4>
+                            <hr>
+                            <div id="editor1-gradelevel"></div>
+                        </div>
+                    </div>
 
-                <div class="col-lg-6" style="padding-top:20px;">
-                    <div class="p-3">
-                        <h4 class="blue">Analysis 1:</h4>
-                        <hr>
-                        <div id="editor1-gradelevel"></div>
-                        <div id="report1"></div>
-                        <canvas id="sentence-counts1" class="canvas"></canvas>
-
+                    <div class="col-lg-6" style="padding-top:0px">
+                        <div class="p-3">
+                            <h4 class="blue">Analysis 2:</h4>
+                            <hr>
+                        </div>
                     </div>
                 </div>
-
-                <!-- Report column div -->
-
-                <div class="col-lg-6" style="padding-top:20px;">
-                    <div class="p-3">
-                        <h4 class="blue">Analysis 2:</h4>
-                        <hr>
-                        <div id="report2"></div>
-                        <canvas id="sentence-counts2" class="canvas"></canvas>
+                <!-- Starter Toggle-->
+                
+                <div id="default-Toggle" class="collapse show" aria-labelledby="all-collapse-button">
                     </div>
-                </div><!-- Reco column div -->
-                    <div class="collapse multi-collapse" id="readability-toggle">
-                        Readability info here
-                    </div>
-                    <div class="collapse multi-collapse" id="vocabulary-toggle">
-Mor ereadability info
-
-                </div>
-            </div>
-</div>
-            <div class="row col-lg-8 justify-content-center p-4 bg-gray" style="max-width: 900px; margin-left:20px;">
-                <div class="row col-lg-12 bg-white border shadow p-4 d-flex-row mb-2">
-                    <!--Paper container for editors -->
-                    <div class="col-lg-6 border-end">
-                        <!--First editor column-->
-                        <h2 class="blue">Copy 1:</h2>
-                        <form>
-                            <div class="mb-3">
-                                <!-- First Column with User Input -->
-                                <div id="editor-wrapper">
-                                    <div id="editor1" contenteditable="true" style="overflow-y:auto; padding:10px;">
-
-                                        <p style="color:#cccccc;">Paste some copy you'd like analyzed here.</p>
-
-                                        <p>When you click one of the buttons above, you'll see a report based on your
-                                            copy.</p>
-
-                                        <p>It's handy to see places where your voice might align with your client's (or
-                                            not). Use this as a place to edit – but don't forget to copy/paste your work
-                                            to save it! </p>
-
-                                        <p>Phrases in green have been marked to show passive voice.</p>
-
-                                        <p>You can format your text with the toolbar.</p>
-
-                                        <p>Paste in something you're working on and edit away. Or, click the Write
-                                            button and compose something new.</p>
-
-                                    </div> <!-- editor -->
-                                </div>
-                                <!--editor-wrapper-->
-                            </div><!-- First Column with User Input -->
-                        </form>
-                    </div>
-
-                    <!-- Column 2 inside editor -->
-                    <div class="col-lg-6">
-                        <h2 class="blue">Copy 2:</h2>
-                        <form>
-                            <div class="mb-3">
-                                <!-- Second Column with User Input -->
-                                <div id="editor2-wrapper">
-                                    <div id="editor2" contenteditable="true" style="padding:10px;">
-
-                                        <p style="color:#cccccc;">Paste some client copy here. Use it as a sample to
-                                            compare against your own voice and tone. Or, you can ignore/delete this.</p>
-
-                                        <p>Dear Friend,</p>
-
-                                        <p>I have no idea how you got to this website.</p>
-
-                                        <p>Maybe you read about it in some publication. Maybe a friend referred you to
-                                            it. Perhaps you stumbled onto it by pure dumb luck.</p>
-
-                                        <p>But, however you got here, you have arrived at what is, without question, the
-                                            most valuable website on the entire Internet!</p>
-
-                                        <p>Here's why: Back in September of 1986, I began publishing a newsletter
-                                            cleverly called The Gary Halbert Letter. The subscription price was $195.00
-                                            per year and, with very little promotion, I soon had readers in more than 50
-                                            countries. Then, I started offering a Lifetime Subscription for $2,855.00.
-                                        </p>
-
-                                        <p>And, guess what? It wasn't long until nearly all my subscribers were Lifetime
-                                            Subscribers!</p>
-
-                                        <p>Since I began writing this newsletter, I have received thousands upon
-                                            thousands of letters from people telling me how my newsletters have helped
-                                            them make millions (sometimes tens of millions) of dollars, saved their
-                                            health (and, in some cases, literally saved their lives), kept their
-                                            marriages intact... and... in various other ways... improved their lives
-                                            immensely.</p>
-
-                                        <p>So, I got to thinking, "Well, hell... if what I write helps people this much,
-                                            it should be available to everyone... even if... they can't afford to
-                                            subscribe to my newsletter." Therefore, I've put all my newsletters (with
-                                            some very sparse editing) right here on this website... for... everyone in
-                                            the world... to read...</p>
-
-                                        <p>Absolutely Free!</p>
-
-                                        <p>Just click below where it says "Newsletter Menu"... then... you'll be taken
-                                            to a page where you'll see a forest of envelope icons with "Headlines" on
-                                            them.</p>
-
-                                        <p>Each envelope contains one issue of my newsletter. And, as you'll soon see,
-                                            the subject of each individual newsletter is identified on the front of the
-                                            envelope. If it looks like any particular newsletter would be of interest to
-                                            you, just click on the envelope it's in... and... shazam!... the entire text
-                                            of that issue will appear instantly (no downloading required) on your
-                                            computer screen. You can read it on your screen, print it out and read it,
-                                            schmuck it onto a floppy disk or CD... or... whatever your little heart
-                                            desires.</p>
-
-                                        <p>It's 100% free. There's nothing you have to buy... and... on this website...
-                                        </p>
-
-                                        <p>You Will NEVER See A Scum-Sucking Pop-Up Ad Or A Scum-Sucking Banner Ad!</p>
-
-                                        <p>Please excuse my "French"... but... I hate those damn things.</p>
-
-                                        <p>Whatever. Anyway, I write a new issue of my newsletter approximately every
-                                            30-days... and... if you want to know immediately when a new issue is
-                                            posted, just click below and send me your e-mail address. Then, I'll send
-                                            you a one-line e-mail message each month telling you the brand new issue is
-                                            now on the website.</p>
-
-                                        <p>In any case, I hope you find as much value in these newsletters as thousands
-                                            of others have.</p>
-
-                                        <p>Sincerely, Gary C. Halbert "The Prince Of Print"</p>
-
+                <!-- Readability Toggle-->
+                <div id="Readability-Toggle" class="collapse all-collapse" aria-labelledby="readability-button">
+                    <div class="card" style="margin-bottom:20px">
+                        <h5 class="card-header">Readability</h5>
+                        <div class="card-body">
+                            <div class="container" style="padding:0px;">
+                                <div class="row p-0" style="padding:0px;">
+                                    <div class="col-6 p-0 border-end">
+                                        <div id="readability-report1"></div>
+                                    </div>
+                                    <div class="col-6 p-0">
+                                        <div id="readability-report2"></div>
                                     </div>
                                 </div>
-                                <!--editor-sample-->
                             </div>
-                            <!--editor-sample-wrapper-->
-
-                        </form>
-                    </div> <!-- Right inner column -->
+                        </div>
+                    </div>
                 </div>
-            </div> <!-- 8-col Paper editing area -->
+                <!-- Vocabulary Toggle-->
+                <div id="Vocabulary-Toggle" class="collapse all-collapse">
+                    <div class="card" style="margin-bottom:20px">
+                        <h5 class="card-header">Vocabulary</h5>
+                        <div class="card-body">
+                            <div class="container" style="padding:0px;">
+                                <div class="row p-0" style="padding:0px;">
+                                    <div class="col-6 p-0 border-end">
+                                        <div id="vocab-report1"></div>
+                                    </div>
+                                    <div class="col-6 p-0 border-end">
+                                        <div id="vocab-report2"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                                <!-- Tone & Sentiment Toggle-->
+                                <div id="Tone-Toggle" class="collapse all-collapse">
+                                    <div class="card" style="margin-bottom:20px">
+                                        <h5 class="card-header">Tone & Sentiment</h5>
+                                        <div class="card-body">
+                                            <div class="container" style="padding:0px;">
+                                                <div class="row p-0" style="padding:0px;">
+                                                    <div class="col-6 p-0 border-end">
+                                                        <div id="sentiment-results1"></div>
+                                                    </div>
+                                                    <div class="col-6 p-0">
+                                                        <div id="sentiment-results2"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                                <!-- Cadence Toggle-->
+                <div id="Cadence-Toggle" class="collapse all-collapse">
+                    <div class="card" style="margin-bottom:20px">
+                        <h5 class="card-header">Cadence</h5>
+                        <div class="card-body" style="padding:0px;">
+                            <div class="container" style="padding:0px;">
+                                <div class="row p-0">
+                                    <div class="col-6 p-0 border-end">
+                                        <div id="cadence-report1"></div>
+                                        <div id="chart-container" style="padding:20px;">
 
+  <canvas id="sentence-counts1"></canvas>
+</div>
+                                    </div>
+                                    <div class="col-6 p-0">
+                                        <div id="cadence-report2"></div>
+                                        <div id="chart-container2"  style="padding:20px;">
+<canvas id="sentence-counts2"></canvas>
+</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-        </div> <!-- Inner 12-row -->
+        
+
+        <!-- Column for editors -->
+    <div class="row col-lg-8 justify-content-center p-4 bg-gray" style="max-width: 900px; margin-left:20px;">
+        <div class="row col-lg-12 bg-white border shadow p-4 d-flex-row mb-2">
+            <!--Paper container for editors -->
+            <div class="col-lg-6 border-end">
+                <!--First editor column-->
+                <h2 class="blue">Copy 1:</h2>
+                <form>
+                    <div class="mb-3">
+                        <!-- First Column with User Input -->
+                        <div id="editor-wrapper">
+                            <div id="editor1" contenteditable="true" style="overflow-y:auto; padding:10px;">
+
+                                <p style="color:#cccccc;">Paste some copy you'd like analyzed here.</p>
+
+                                <p>When you click one of the buttons above, you'll see a report based on your
+                                    copy.</p>
+
+                                <p>It's handy to see places where your voice might align with your client's (or
+                                    not). Use this as a place to edit – but don't forget to copy/paste your work
+                                    to save it! </p>
+
+                                <p>Phrases in green have been marked to show passive voice.</p>
+
+                                <p>You can format your text with the toolbar.</p>
+
+                                <p>Paste in something you're working on and edit away. Or, click the Write
+                                    button and compose something new.</p>
+
+                            </div> <!-- editor -->
+                        </div>
+                        <!--editor-wrapper-->
+                    </div><!-- First Column with User Input -->
+                </form>
+            </div>
+
+            <!-- Column 2 inside editor -->
+            <div class="col-lg-6">
+                <h2 class="blue">Copy 2:</h2>
+                <form>
+                    <div class="mb-3">
+                        <!-- Second Column with User Input -->
+                        <div id="editor2-wrapper">
+                            <div id="editor2" contenteditable="true" style="padding:10px;">
+
+                                <p style="color:#cccccc;">Paste some client copy here. Use it as a sample to
+                                    compare against your own voice and tone. Or, you can ignore/delete this.</p>
+
+                                <p>Dear Friend,</p>
+
+                                <p>I have no idea how you got to this website.</p>
+
+                                <p>Maybe you read about it in some publication. Maybe a friend referred you to
+                                    it. Perhaps you stumbled onto it by pure dumb luck.</p>
+
+                                <p>But, however you got here, you have arrived at what is, without question, the
+                                    most valuable website on the entire Internet!</p>
+
+                                <p>Here's why: Back in September of 1986, I began publishing a newsletter
+                                    cleverly called The Gary Halbert Letter. The subscription price was $195.00
+                                    per year and, with very little promotion, I soon had readers in more than 50
+                                    countries. Then, I started offering a Lifetime Subscription for $2,855.00.
+                                </p>
+
+                                <p>And, guess what? It wasn't long until nearly all my subscribers were Lifetime
+                                    Subscribers!</p>
+
+                                <p>Since I began writing this newsletter, I have received thousands upon
+                                    thousands of letters from people telling me how my newsletters have helped
+                                    them make millions (sometimes tens of millions) of dollars, saved their
+                                    health (and, in some cases, literally saved their lives), kept their
+                                    marriages intact... and... in various other ways... improved their lives
+                                    immensely.</p>
+
+                                <p>So, I got to thinking, "Well, hell... if what I write helps people this much,
+                                    it should be available to everyone... even if... they can't afford to
+                                    subscribe to my newsletter." Therefore, I've put all my newsletters (with
+                                    some very sparse editing) right here on this website... for... everyone in
+                                    the world... to read...</p>
+
+                                <p>Absolutely Free!</p>
+
+                                <p>Just click below where it says "Newsletter Menu"... then... you'll be taken
+                                    to a page where you'll see a forest of envelope icons with "Headlines" on
+                                    them.</p>
+
+                                <p>Each envelope contains one issue of my newsletter. And, as you'll soon see,
+                                    the subject of each individual newsletter is identified on the front of the
+                                    envelope. If it looks like any particular newsletter would be of interest to
+                                    you, just click on the envelope it's in... and... shazam!... the entire text
+                                    of that issue will appear instantly (no downloading required) on your
+                                    computer screen. You can read it on your screen, print it out and read it,
+                                    schmuck it onto a floppy disk or CD... or... whatever your little heart
+                                    desires.</p>
+
+                                <p>It's 100% free. There's nothing you have to buy... and... on this website...
+                                </p>
+
+                                <p>You Will NEVER See A Scum-Sucking Pop-Up Ad Or A Scum-Sucking Banner Ad!</p>
+
+                                <p>Please excuse my "French"... but... I hate those damn things.</p>
+
+                                <p>Whatever. Anyway, I write a new issue of my newsletter approximately every
+                                    30-days... and... if you want to know immediately when a new issue is
+                                    posted, just click below and send me your e-mail address. Then, I'll send
+                                    you a one-line e-mail message each month telling you the brand new issue is
+                                    now on the website.</p>
+
+                                <p>In any case, I hope you find as much value in these newsletters as thousands
+                                    of others have.</p>
+
+                                <p>Sincerely, Gary C. Halbert "The Prince Of Print"</p>
+
+                            </div>
+                        </div>
+                        <!--editor-sample-->
+                    </div>
+                    <!--editor-sample-wrapper-->
+
+                </form>
+            </div> <!-- Right inner column -->
+        </div>
+    </div> <!-- 8-col Paper editing area -->
+</div>
+
+    </div> <!-- Inner 12-row -->
     </div>
 
 
@@ -341,7 +410,7 @@ Mor ereadability info
 
         var analyzer2 = new Analyzer2({
             selector: "#editor2",
-            reportSelector: "#report2"
+            reportSelector: "#report2",
         });
         var divmon2 = new DivMonitor({
             selector: "editor2",
@@ -430,6 +499,7 @@ Mor ereadability info
         });
 
     </script>
+
     <div class="row bg-blue p-4 justify-content-center white">
         <p>Footer goes here</p>
         <p>Keeping this here for later until we decide what to do with it.</p>
