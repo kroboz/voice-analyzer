@@ -109,7 +109,7 @@ Analyzer.prototype.setup = function () {
   // report widgets
 
   $("#readability-report1").append(`
- <div id="readability" role="tabpanel" aria-labelledby="readability-header" style="padding:20px;">
+ <div id="readability" role="tabpanel" aria-labelledby="readability-header" style="padding:0px;">
          <div class="card-body">
           <div id="grade" class="mb-1 grade"></div>  
           <div id="adverb" class="mb-1 adverb counter"></div>
@@ -131,15 +131,15 @@ Analyzer.prototype.setup = function () {
 
   $("#tone-report1").append(`
 <div class="tone-report" id="tone" role="tabpanel" aria-labelledby="tone-sentiment" style="padding:20px;">
-            <div id="sentiment-results1"></div>
+            <div id="sentiment-results1" style="padding:20px;"></div>
         </div>
 `);
 
   $("#cadence-report1").append(`
 <div class="cadence-report" id="cadence" role="tabpanel" aria-labelledby="cadence-header" style="padding:20px;">
-          <div id='sentence-length' class=''></div>
+          <div id='sentence-length' class=''  style="padding:20px;"></div>
           <canvas id="sentence-chart" width="150" height="100"></canvas>
-          <div id='punctuation' class=''></div>
+          <div id='punctuation' class=''  style="padding:20px;"></div>
     </div>
     </div>
     `);
