@@ -111,7 +111,6 @@ Analyzer.prototype.setup = function () {
   $("#readability-report1").append(`
  <div id="readability" role="tabpanel" aria-labelledby="readability-header" style="padding:0px;">
          <div class="card-body">
-          <div id="grade" class="mb-1 grade"></div>  
           <div id="adverb" class="mb-1 adverb counter"></div>
           <div id="passive" class="mb-1 passive counter"></div>
           <div id="complex" class="mb-1 complex counter"></div>
