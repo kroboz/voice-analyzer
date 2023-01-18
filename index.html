@@ -333,41 +333,38 @@
 
     <!-- Footer Scripts -->
 
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"
-        integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.min.js"
-        integrity="sha384-w1Q4orYjBQndcko6MimVbzY0tgp4pWB4lZ7lr30WKz0vr/aWKhXdBNmNb5D92v7s"
-        crossorigin="anonymous"></script>
 
 
-<!-- Grade Level Script -->
 
-<script>
-    let editor1 = document.getElementById("editor1").innerHTML;
-    let editor2 = document.getElementById("editor2").innerHTML;
 
-    // Replace line breaks, paragraphs, and quotation marks/apostrophes with spaces
-    editor1 = editor1.replace(/(\r\n|\n|\r|\")/gm, " ");
-    editor2 = editor2.replace(/(\r\n|\n|\r|\")/gm, " ");
+    <!-- Grade Level Script -->
 
-    fetch('http://matthallcommon.pythonanywhere.com/grade_level', {
-        method: 'POST',
-        body: JSON.stringify({ 'Editor 1': editor1, 'Editor 2': editor2 }),
-        headers: { 'Content-Type': 'application/json' }
-    })
-        .then(res => res.json())
-        .then(data => {
-            console.log(data);
-            let grade_level_editor1 = data.grade_level_editor1;
-            let grade_level_editor2 = data.grade_level_editor2;
-            // Append results to the <div> elements
-            // document.getElementById("gradelevel_editor1").innerHTML = grade_level_editor1;
-            // document.getElementById("gradelevel_editor2").innerHTML = grade_level_editor2;
-            $("#gradelevel_editor1").append(`<b>Grade Level:</b> ${grade_level_editor1}`);
-            $("#gradelevel_editor2").append(`<b>Grade Level:</b> ${grade_level_editor2}`);
+    <script>
+        let editor1 = document.getElementById("editor1").innerHTML;
+        let editor2 = document.getElementById("editor2").innerHTML;
+
+        // Replace line breaks, paragraphs, and quotation marks/apostrophes with spaces
+        editor1 = editor1.replace(/(\r\n|\n|\r|\")/gm, " ");
+        editor2 = editor2.replace(/(\r\n|\n|\r|\")/gm, " ");
+
+        fetch('https://matthallcommon.pythonanywhere.com/grade_level', {
+            method: 'POST',
+            body: JSON.stringify({ 'Editor 1': editor1, 'Editor 2': editor2 }),
+            headers: { 'Content-Type': 'application/json' }
         })
-        .catch(err => console.error(err));
-</script>
+            .then(res => res.json())
+            .then(data => {
+                console.log(data);
+                let grade_level_editor1 = data.grade_level_editor1;
+                let grade_level_editor2 = data.grade_level_editor2;
+                // Append results to the <div> elements
+                // document.getElementById("gradelevel_editor1").innerHTML = grade_level_editor1;
+                // document.getElementById("gradelevel_editor2").innerHTML = grade_level_editor2;
+                $("#gradelevel_editor1").append(`<b>Grade Level:</b> ${grade_level_editor1}`);
+                $("#gradelevel_editor2").append(`<b>Grade Level:</b> ${grade_level_editor2}`);
+            })
+            .catch(err => console.error(err));
+    </script>
 
 
 
@@ -544,8 +541,6 @@
 
     </script>
 
-
-    
 
     <div class="row bg-blue p-4 justify-content-center white">
         <p>Footer goes here</p>
