@@ -361,8 +361,10 @@
             let grade_level_editor1 = data.grade_level_editor1;
             let grade_level_editor2 = data.grade_level_editor2;
             // Append results to the <div> elements
-            document.getElementById("gradelevel_editor1").innerHTML = grade_level_editor1;
-            document.getElementById("gradelevel_editor2").innerHTML = grade_level_editor2;
+            // document.getElementById("gradelevel_editor1").innerHTML = grade_level_editor1;
+            // document.getElementById("gradelevel_editor2").innerHTML = grade_level_editor2;
+            $("#gradelevel_editor1").append(`<b>Grade Level:</b> ${grade_level_editor1}`);
+            $("#gradelevel_editor2").append(`<b>Grade Level:</b> ${grade_level_editor2}`);
         })
         .catch(err => console.error(err));
 </script>
@@ -543,45 +545,7 @@
     </script>
 
 
-    <script>
-        // Get the content of the <div> with the ID "editor1"
-        var editorContent1 = document.getElementById("editor1").innerHTML;
-        // Get the content of the <div> with the ID "editor2"
-        var editorContent2 = document.getElementById("editor2").innerHTML;
-
-        // Create a new XMLHttpRequest object
-        var xhr = new XMLHttpRequest();
-
-        // Define the request method, URL, and boolean for asynchronous
-        xhr.open("POST", "http://matthallcommon.pythonanywhere.com/grade_level", true);
-
-        // Set the request header for the content type
-        xhr.setRequestHeader("Content-Type", "application/json");
-
-        // Send the request for editor1
-        xhr.send(JSON.stringify({ text: editorContent1 }));
-
-        // Define a function to handle the response
-        xhr.onload = function () {
-            // Parse the response JSON
-            var response = JSON.parse(xhr.response);
-            // Get the grade level
-            var grade_level1 = response.grade_level;
-            // Display the result in a <div> with the ID "gradelevel1"
-            document.getElementById("gradelevel1").innerHTML = grade_level1;
-            // Create a new XMLHttpRequest object for editor2
-            var xhr2 = new XMLHttpRequest();
-            xhr2.open("POST", "http://matthallcommon.pythonanywhere.com/", true);
-            xhr2.setRequestHeader("Content-Type", "application/json");
-            xhr2.send(JSON.stringify({ text: editorContent2 }));
-
-            xhr2.onload = function () {
-                var response2 = JSON.parse(xhr2.response);
-                var grade_level2 = response2.grade_level;
-                document.getElementById("gradelevel2").innerHTML = 'Smart Grade Level= ${grade_level2}';
-            }
-        }
-    </script>
+    
 
     <div class="row bg-blue p-4 justify-content-center white">
         <p>Footer goes here</p>
