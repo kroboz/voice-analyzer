@@ -90,11 +90,7 @@ var Stats = {
 };
 
 function Analyzer(cfg) {
-  this.lastToneUpdate = null;
-  this.lastUpdate = null;
-  this.stylometryBusy = {};
-  this.stylometryLastRequest = {};
-  this.stylometryLastUpdate = {};
+
   this.selector = cfg.selector;
   this.reportSelector = cfg.reportSelector;
   this.setup();
@@ -116,6 +112,7 @@ Analyzer.prototype.setup = function () {
           <div id="complex" class="mb-1 complex counter"></div>
           <div id="hard" class="mb-1 hard counter"></div>
           <div id="vhard" class="mb-1 vhard counter"></div>
+          <div id="angerwords" class="mb-1 anger counter"></div>
                    <div id='punctuation' class='' style="padding:20px;"></div>
          </div>
        </div>
@@ -226,14 +223,7 @@ Analyzer.prototype.analyze = function () {
   );
 
   this.report();
-  this.updateTone();
-  this.updateSentiment($(this.selector).text());
 
-  const models = ["carlton", "halbert"];
-  var aly = this;
-  models.forEach(function (m) {
-    aly.updateStylometry(m);
-  });
 
   this.lastUpdate = Date.now();
 };
@@ -391,79 +381,6 @@ function shuffle(a) {
   return a;
 }
 
-Analyzer.prototype.updateStylometry = function (model) {
-  let aly = this;
-  let paragraphs = $(this.selector).find("p").toArray();
-
-  var text = "";
-  paragraphs.forEach(function (p) {
-    text += $(p).text() + "\n";
-  });
-  //console.log(text);
-  var sentences = text.match(/[^\r\n]+/g);
-  if (!sentences) return;
-  //console.log(sentences);
-  shuffle(sentences);
-  var samples = [];
-  for (var i = 0; i < 10 && sentences.length; i++) {
-    var sample = "";
-    for (var j = 0; j < 1 && sentences.length; j++) {
-      var sentence = sentences.pop().trim();
-
-      if (sample != "") sample += " ";
-      sample += sentence;
-
-      if (sample.length > 200) break;
-    }
-
-    if (sample != "") samples.push(sample);
-  }
-
-  if (samples.length == 0) return;
-
-  var now = Date.now();
-  aly.stylometryLastRequest[model] = now;
-  if (aly.stylometryBusy[model]) return; // only allow 1 update at a time
-  aly.stylometryBusy[model] = true;
-  aly.stylometryLastUpdate[model] = now;
-
-  const modelSelector = "#stylo-score-" + model;
-  if (!$(modelSelector).length)
-    $("#stylo-score").append(`<div id="stylo-score-${model}"></div>`);
-
-  $(modelSelector).html(`<em>Analyzing ${model}...</em>`);
-  var data = { model: model, sentences: samples };
-  $.ajax({
-    url: "/stylo",
-    type: "POST",
-    contentType: "application/json",
-    data: JSON.stringify(data),
-    success: function (data) {
-      console.log(data);
-      if (!data.success) return;
-
-      //var numPos = 0;
-      var totalPos = 0;
-      data.predictions.forEach(function (prediction) {
-        //if (prediction.probabilities[1] > 0.999)
-        //  numPos++;
-        totalPos +=
-          prediction.probabilities[1] > 0.999 ? prediction.probabilities[1] : 0;
-        totalPos -= prediction.probabilities[0];
-      });
-      //var posPct = (numPos / data.predictions.length * 100.).toFixed(2);
-      var posPct = ((totalPos / data.predictions.length) * 100).toFixed(2);
-      var posPct = Math.max(0, posPct);
-      var modelDisplayName = model.charAt(0).toUpperCase() + model.slice(1);
-      $(modelSelector).html(`${posPct}% ${modelDisplayName}`);
-    },
-    complete: function () {
-      aly.stylometryBusy[model] = false;
-      if (aly.stylometryLastRequest[model] > aly.stylometryLastUpdate[model])
-        aly.updateStylometry(model);
-    },
-  });
-};
 
 Analyzer.prototype.updateWordSentenceHistogram = function (sentence) {
   // collect word length stats
@@ -516,6 +433,7 @@ Analyzer.prototype.processParagraph = function (p, idx) {
     sent = this.getComplex(sent);
     sent = this.getPassive(sent);
     sent = this.getQualifier(sent);
+    sent = this.getAnger(sent);
     let level = this.calculateLevel(letters, words, 1);
 
     if (words < 4) {
@@ -613,50 +531,13 @@ Analyzer.prototype.report = function () {
       );
   }
 
-  $("#anger").hide();
-  if (this.data.angerVoice) {
-    $("#anger")
+  $("#angerwords").hide();
+  if (this.data.anger) {
+    $("#angerwords")
       .show()
       .html(
-        `<span class='num'>${this.data.angerVoice}</span> use${this.data.angerVoice > 1 ? "s" : ""
+        `<span class='anger'>${this.data.anger}</span> use${this.data.anger > 1 ? "s" : ""
         } of Anger.`
-      );
-  }
-
-  $("#disgust").hide();
-  if (this.data.disgustVoice) {
-    $("#disgust")
-      .show()
-      .html(
-        `<span class='num'>${this.data.disgustVoice}</span> use${this.data.disgustVoice > 1 ? "s" : ""
-        } of disgust.`
-      );
-  }
-  $("#fear").hide();
-  if (this.data.fearVoice) {
-    $("#fear")
-      .show()
-      .html(
-        `<span class='num'>${this.data.fearVoice}</span> use${this.data.fearVoice > 1 ? "s" : ""
-        } of Fear.`
-      );
-  }
-  $("#joy").hide();
-  if (this.data.joyVoice) {
-    $("#joy")
-      .show()
-      .html(
-        `<span class='num'>${this.data.joyVoice}</span> use${this.data.joyVoice > 1 ? "s" : ""
-        } of joy.`
-      );
-  }
-  $("#sadness").hide();
-  if (this.data.sadnessVoice) {
-    $("#sadness")
-      .show()
-      .html(
-        `<span class='num'>${this.data.sadnessVoice}</span> use${this.data.sadnessVoice > 1 ? "s" : ""
-        } of sadness.`
       );
   }
 
@@ -802,7 +683,14 @@ Analyzer.prototype.getQualifier = function (sentence) {
   return sentence;
 };
 
-
+Analyzer.prototype.getAnger = function (sentence) {
+  let angerwordmatch = this.getAngerWords();
+  let wordList = Object.keys(angerwordmatch);
+  wordList.forEach((key) => {
+    sentence = this.findAndSpan(sentence, key, "angerwordmatch");
+  });
+  return sentence;
+};
 
 Analyzer.prototype.checkPrewords = function (words, originalWords, match) {
   let preWords = ["is", "are", "was", "were", "be", "been", "being"];
@@ -836,7 +724,7 @@ Analyzer.prototype.calculateLevel = function (letters, words, sentences) {
 
 Analyzer.prototype.findAndSpan = function (sentence, string, type) {
   let index = sentence.toLowerCase().indexOf(string);
-  let a = { complex: "complex", qualifier: "adverbs" };
+  let a = { complex: "complex", qualifier: "adverbs", anger: "anger" };
   if (index >= 0) {
     if (
       (index > 0 &&
@@ -1341,6 +1229,8 @@ Analyzer.prototype.getJustifierWords = function () {
     "we wonder": 1,
   };
 };
+
+
 
 Analyzer.prototype.getAngerWords = function () {
   return {
