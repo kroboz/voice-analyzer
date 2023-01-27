@@ -107,13 +107,6 @@ Analyzer.prototype.setup = function () {
   $("#readability-report1").append(`
  <div id="readability" role="tabpanel" aria-labelledby="readability-header" style="padding:0px;">
          <div class="card-body">
-          <div id="adverb" class="mb-1 adverb counter"></div>
-          <div id="passive" class="mb-1 passive counter"></div>
-          <div id="complex" class="mb-1 complex counter"></div>
-          <div id="hard" class="mb-1 hard counter"></div>
-          <div id="vhard" class="mb-1 vhard counter"></div>
-          <div id="angerwords" class="mb-1 anger counter"></div>
-          <div id="disgustwords" class="mb-1 disgust counter"></div>
                    <div id='punctuation' class='' style="padding:20px;"></div>
          </div>
        </div>
@@ -124,6 +117,9 @@ Analyzer.prototype.setup = function () {
           <div id='me-words' class=''></div>
           <div style="display:none;">  <div id='word-length' class='text-small' style="padding-top:20px; display:none;"></div>
           <canvas id="word-chart" width="150" height="100" style="display:none;"></canvas></div>
+          <div id="short1" class="mb-1 short counter"></div>
+          <div id="medium1" class="mb-1 medium counter"></div>
+          <div id="long1" class="mb-1 long counter"></div>
 </div>
 `);
 
@@ -352,6 +348,7 @@ const punctuationNames = {
   "(": "Parenthesis",
 };
 
+
 Analyzer.prototype.updateSentiment = function (text) {
   var sentiment = "neutral";
 
@@ -360,7 +357,8 @@ Analyzer.prototype.updateSentiment = function (text) {
     if (intensity.compound > 0.1) {
       var pct = parseInt(intensity.compound * 100);
       sentiment = pct + "% positive";
-    } else if (intensity.compound < -0.1) {
+    } 
+    else if (intensity.compound < -0.1) {
       var pct = parseInt(-intensity.compound * 100);
       sentiment = pct + "% negative";
     }
@@ -386,7 +384,8 @@ function shuffle(a) {
 Analyzer.prototype.updateWordSentenceHistogram = function (sentence) {
   // collect word length stats
   sentence.split(" ").map((word) => {
-    let wordLen = Math.min(word.length, this.data.wordLenHisto.length - 1);
+    let wordLen = Math.min(word.length,
+       this.data.wordLenHisto.length - 1);
     this.data.wordLenHisto[wordLen]++;
   });
 
@@ -560,10 +559,6 @@ Analyzer.prototype.report = function () {
   } else {
     $("#disgustwords").hide();
   }
-
-
-// Anger,   Disgust,  Fear,  Joy,  Sadness; 
-// Language: Analytical, Confident, Tentative
 
   $("#complex").hide();
   if (this.data.complex) {

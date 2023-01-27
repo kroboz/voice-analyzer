@@ -50,8 +50,7 @@ var Stats = {
       if (modeMap[val] > maxCount) {
         modes = [val];
         maxCount = modeMap[val];
-      }
-      else if (modeMap[val] === maxCount) {
+      } else if (modeMap[val] === maxCount) {
         modes.push(val);
         maxCount = modeMap[val];
       }
@@ -61,9 +60,11 @@ var Stats = {
 
   variance: function (array) {
     var mean = arr.mean(array);
-    return arr.mean(array.map(function (num) {
+    return arr.mean(
+      array.map(function (num) {
       return Math.pow(num - mean, 2);
-    }));
+    })
+    );
   },
 
   standardDeviation: function (array) {
@@ -72,9 +73,11 @@ var Stats = {
 
   meanAbsoluteDeviation: function (array) {
     var mean = arr.mean(array);
-    return arr.mean(array.map(function (num) {
+    return arr.mean(
+      array.map(function (num) {
       return Math.abs(num - mean);
-    }));
+    })
+    );
   },
 
   zScores: function (array) {
@@ -83,7 +86,7 @@ var Stats = {
     return array.map(function (num) {
       return (num - mean) / standardDeviation;
     });
-  }
+  },
 };
 
 function Analyzer2(cfg) {
@@ -307,113 +310,12 @@ Analyzer2.prototype.analyze = function () {
     this.data.sentences2 / this.data.paragraphs2);
 
   this.report();
-  this.updateTone();
-  this.updateSentiment($(this.selector).text());
 
-  const models = ["carlton", "halbert"];
-  var aly = this;
-  models.forEach(function (m) {
-    aly.updateStylometry(m);
-  });
 
   this.lastUpdate = Date.now();
 }
 
-Analyzer2.prototype.updateTone = function () {
-  let aly = this;
 
-  setTimeout(function () {
-    const now = Date.now()
-    if (aly.lastToneUpdate == null
-      || (
-        // don't request Tone analysis faster than once per 15s
-        now - aly.lastToneUpdate > 15000
-        // wait 3s after user's last update to update Tone
-        && now - aly.lastUpdate > 3000
-        // only update if contents changed
-        && aly.lastUpdate > aly.lastToneUpdate)
-    ) {
-      aly.lastToneUpdate = aly.lastUpdate;
-
-      $("#tone-report2").html("<em>Analyzing...</em>");
-
-      data = { text: $(aly.selector).text() };
-      $.ajax({
-        url: "/tone",
-        type: "POST",
-        contentType: "application/json",
-        data: JSON.stringify(data),
-        success: function (data) {
-          //console.log(data);
-
-          data.result.sentences2_tone.forEach(function (r) {
-            const hash = aly.computeHashCode(r.text);
-            if (!(hash in aly.data.sentenceHash2Para))
-              return;
-
-            const paraIdx = aly.data.sentenceHash2Para[hash];
-            r.tone_categories.forEach(function (cat) {
-              cat.tones.forEach(function (tone) {
-                if (tone.score >= 0.4 && tone.score < 0.6)
-                  $("#para-" + paraIdx).addClass(tone.tone_id + "-low");
-                else if (tone.score >= 0.6 && tone.score < 0.8)
-                  $("#para-" + paraIdx).addClass(tone.tone_id + "-med");
-                else if (tone.score >= 0.8)
-                  $("#para-" + paraIdx).addClass(tone.tone_id + "-high");
-              });
-            });
-          });
-
-          tones = {};
-          data.result.document_tone.tone_categories
-            .forEach(function (t) {
-              tones[t.category_name] = t.tones;
-            });
-
-          var html = '';
-          for (var n in tones) {
-            var list = '';
-            tones[n].forEach(function (t) {
-              list += `<div class="tone-select" data-tone-id="${t.tone_id}">
-                ${t.tone_name}: ${(t.score * 100).toFixed(2)}%</div>`;
-            });
-
-            const title = n.replace(' Tone', '');
-            html += `<div class="mb-2">
-              <div class="font-weight-bold">${title}</div>
-              ${list}
-            </div>`;
-          }
-
-          // last update stamp
-          const d = new Date();
-          html += `<div class="text-sm font-italic">Last updated: 
-            ${d.toLocaleString()}</div>`;
-          $("#tone-report2").html(html);
-
-          // highlight paragraphs2 with this tone on hover
-          $("#tone-report2 .tone-select").hover(function (e) {
-            const toneId = $(this).data('tone-id');
-            $("." + toneId + "-low").addClass('highlight-tone-low');
-            $("." + toneId + "-med").addClass('highlight-tone-med');
-            $("." + toneId + "-high").addClass('highlight-tone-high');
-
-          }, function (e) {
-            const toneId = $(this).data('tone-id');
-            $("." + toneId + "-low").removeClass('highlight-tone-low');
-            $("." + toneId + "-med").removeClass('highlight-tone-med');
-            $("." + toneId + "-high").removeClass('highlight-tone-high');
-          });
-        },
-        complete: function () {
-          aly.updateTone();
-        }
-      });
-    }
-    else
-      aly.updateTone();
-  }, 250);
-}
 
 Analyzer2.prototype.updateSentiment = function (text) {
   var sentiment = "neutral";
@@ -446,86 +348,7 @@ function shuffle(a) {
   return a;
 }
 
-Analyzer2.prototype.updateStylometry = function (model) {
-  let aly = this;
-  let paragraphs2 = $(this.selector).find("p").toArray();
 
-  var text = "";
-  paragraphs2.forEach(function (p) {
-    text += $(p).text() + "\n";
-  });
-  //console.log(text);
-  var sentences2 = text.match(/[^\r\n]+/g);
-  if (!sentences2)
-    return;
-  //console.log(sentences2);
-  shuffle(sentences2);
-  var samples = [];
-  for (var i = 0; i < 10 && sentences2.length; i++) {
-    var sample = "";
-    for (var j = 0; j < 1 && sentences2.length; j++) {
-      var sentence = sentences2.pop().trim();
-
-      if (sample != "")
-        sample += " ";
-      sample += sentence;
-
-      if (sample.length > 200)
-        break;
-    }
-
-    if (sample != "")
-      samples.push(sample);
-  }
-
-  if (samples.length == 0)
-    return;
-
-  var now = Date.now();
-  aly.stylometryLastRequest[model] = now;
-  if (aly.stylometryBusy[model])
-    return; // only allow 1 update at a time
-  aly.stylometryBusy[model] = true;
-  aly.stylometryLastUpdate[model] = now;
-
-  const modelSelector = "#stylo-score-" + model;
-  if (!$(modelSelector).length)
-    $("#stylo-score").append(`<div id="stylo-score-${model}"></div>`);
-
-  $(modelSelector).html(`<em>Analyzing ${model}...</em>`);
-  var data = { model: model, sentences2: samples };
-  $.ajax({
-    url: "/stylo",
-    type: "POST",
-    contentType: "application/json",
-    data: JSON.stringify(data),
-    success: function (data) {
-      console.log(data);
-      if (!data.success)
-        return;
-
-      //var numPos = 0;
-      var totalPos = 0;
-      data.predictions.forEach(function (prediction) {
-        //if (prediction.probabilities[1] > 0.999)
-        //  numPos++;
-        totalPos += (prediction.probabilities[1] > 0.999) ?
-          prediction.probabilities[1] : 0;
-        totalPos -= prediction.probabilities[0];
-      });
-      //var posPct = (numPos / data.predictions.length * 100.).toFixed(2);
-      var posPct = (totalPos / data.predictions.length * 100).toFixed(2);
-      var posPct = Math.max(0, posPct);
-      var modelDisplayName = model.charAt(0).toUpperCase() + model.slice(1);
-      $(modelSelector).html(`${posPct}% ${modelDisplayName}`);
-    },
-    complete: function () {
-      aly.stylometryBusy[model] = false;
-      if (aly.stylometryLastRequest[model] > aly.stylometryLastUpdate[model])
-        aly.updateStylometry(model);
-    }
-  });
-}
 
 Analyzer2.prototype.updateWordSentenceHistogram = function (sentence) {
   // collect word length stats
