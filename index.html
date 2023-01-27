@@ -140,30 +140,16 @@
                             <div class="container" style="padding:20px;">
                                 <div class="row p-0" style="padding:20px;">
                                     <div class="col-6 p-0 border-end">
-                                        <div id="sentiment-results1"></div>
                                         <div style="padding-top: 20px; padding-left: 20px;"><h5>Emotion</h5></div>
-                                        <div style="padding-left:20px;"><span id="editor1-anger-total"></span> % Angry words</div>
-                                        <div style="padding-left:20px;"><span id="editor1-disgust-total"></span> % Disgust words </span></div>
-                                        <div style="padding-left:20px;"><span id="editor1-fear-total"></span> % Fear words </div>
-                                        <div style="padding-left:20px;"><span id="editor1-joy-total"></span> % Joy words </div>
-                                        <div style="padding-left:20px;"><span id="editor1-sadness-total"></span> % Sadness words </div>
+                                        <div style="padding-left:20px;"><span id="editor1-emotion-total"></span> % Angry words</div>
                                         <div style="padding-top: 20px; padding-left: 20px;"><h5>Language</h5></div>
-                                        <div style="padding-left:20px;"><span id="editor1-analytical-total"></span> % Analytical words </div>
-                                        <div style="padding-left:20px;"><span id="editor1-confident-total"></span> % Confident words </div>
-                                        <div style="padding-left:20px;"><span id="editor1-tentative-total"></span>Tentative: </div>
+                                        <div style="padding-left:20px;"><span id="editor1-language-total"></span> % Analytical words </div>
                                     </div>
                                     <div class="col-6 p-0" style="padding:20px;">
-                                        <div id="sentiment-results2" style="padding-left:20px;"></div>
                                         <div style="padding-top: 20px; padding-left: 20px;"><h5>Emotion</h5></div>
-                                        <div style="padding-left:20px;"><span id="editor2-anger-total"></span> % Angry words</div>
-                                        <div style="padding-left:20px;"><span id="editor2-disgust-total"></span> % Disgust words </span></div>
-                                        <div style="padding-left:20px;"><span id="editor2-fear-total"></span> % Fear words </div>
-                                        <div style="padding-left:20px;"><span id="editor2-joy-total"></span> % Joy words </div>
-                                        <div style="padding-left:20px;"><span id="editor2-sadness-total"></span> % Sadness words </div>
+                                        <div style="padding-left:20px;"><span id="editor2-emotion-total"></span> % Angry words</div>
                                         <div style="padding-top: 20px; padding-left: 20px;"><h5>Language</h5></div>
-                                        <div style="padding-left:20px;"><span id="editor2-analytical-total"></span> % Analytical words </div>
-                                        <div style="padding-left:20px;"><span id="editor2-confident-total"></span> % Confident words </div>
-                                        <div style="padding-left:20px;"><span id="editor2-tentative-total"></span>Tentative: </div>
+                                        <div style="padding-left:20px;"><span id="editor2-language-total"></span> % Analytical words </div>
                                     </div>
                                 </div>
                             </div>
@@ -219,7 +205,7 @@
                                         <p style="color:#cccccc;">Paste some copy you'd like analyzed here.</p>
 
                                         <p>When you click one of the buttons above, you'll see a report based on your
-                                            copy.</p>
+                                            copy. Fear, disgust, joy, sadness, analytical, confident, tentative, angry.</p>
 
                                         <p>It's handy to see places where your voice might align with your client's (or
                                             not). Use this as a place to edit – but don't forget to copy/paste your work
@@ -227,7 +213,7 @@
 
                                         <p>Phrases in green have been marked to show passive voice.</p>
 
-                                        <p>You can format your text with the toolbar.</p>
+                                        <p>You can format your text with the toolbar. I am angry. Mad I am.</p>
 
                                         <p>Paste in something you're working on and edit away. Or, click the Write
                                             button and compose something new.</p>
@@ -256,7 +242,7 @@
                                         <p>I have no idea how you got to this website.</p>
 
                                         <p>Maybe you read about it in some publication. Maybe a friend referred you to
-                                            it. Perhaps you stumbled onto it by pure dumb luck.</p>
+                                            it. Perhaps you stumbled onto it by pure dumb luck.  Fear, disgust, joy, sadness, analytical, confident, tentative, angry.</p>
 
                                         <p>But, however you got here, you have arrived at what is, without question, the
                                             most valuable website on the entire Internet!</p>
@@ -388,13 +374,29 @@ function analyzeLengths() {
   var shortCount2 = 0;
   var mediumCount2 = 0;
   var longCount2 = 0;
+  var angerCount1 = 0;
+  var disgustCount1 = 0;
+  var fearCount1 = 0; 
+  var joyCount1 = 0;
+  var sadnessCount1 = 0;
+  var analyticalCount1 = 0;
+  var tentativeCount1 = 0;
+  var confidentCount1 = 0;
+  var angerCount2 = 0;
+  var disgustCount2 = 0;
+  var fearCount2 = 0; 
+  var joyCount2 = 0;
+  var sadnessCount2 = 0;
+  var analyticalCount2 = 0;
+  var tentativeCount2 = 0;
+  var confidentCount2 = 0;
 
   // Get elements with IDs "editor1" and "editor2"
   var editor1 = document.getElementById("editor1");
   var editor2 = document.getElementById("editor2");
 
-  // Get all span elements within "editor1"
-  var spans1 = editor1.getElementsByTagName("span");
+// Get all span elements within "editor1"
+var spans1 = editor1.getElementsByTagName("span");
   // Loop through spans and count by class name
   for (var i = 0; i < spans1.length; i++) {
     if (spans1[i].className === "short" && spans1[i].textContent.trim() === "") {
@@ -406,6 +408,22 @@ function analyzeLengths() {
       mediumCount1++;
     } else if (spans1[i].className === "long") {
       longCount1++;
+    } else if (spans1[i].className === "anger") {
+      angerCount1++;
+    } else if (spans1[i].className === "disgust") {
+      disgustCount1++;
+    } else if (spans1[i].className === "fear") {
+      fearCount1++;
+    } else if (spans1[i].className === "joy") {
+      joyCount1++;
+    } else if (spans1[i].className === "sadness") {
+      sadnessCount1++;
+    } else if (spans1[i].className === "analytical") {
+      analyticalCount1++;
+    } else if (spans1[i].className === "tentative") {
+      tentativeCount1++;
+    } else if (spans1[i].className === "confident") {
+      confidentCount1++;
     }
   }
 
@@ -423,18 +441,60 @@ mediumCount2++;
 } else if (spans2[i].className === "long") {
 longCount2++;
 }
+else if (spans2[i].className === "anger") {
+      angerCount2++;
+    } else if (spans2[i].className === "disgust") {
+      disgustCount2++;
+    } else if (spans2[i].className === "fear") {
+      fearCount2++;
+    } else if (spans2[i].className === "joy") {
+      joyCount2++;
+    } else if (spans2[i].className === "sadness") {
+      sadnessCount2++;
+    } else if (spans2[i].className === "analytical") {
+      analyticalCount2++;
+    } else if (spans2[i].className === "tentative") {
+      tentativeCount2++;
+    } else if (spans2[i].className === "confident") {
+      confidentCount2++;
+    }
 }
 
   // Append counts to respective "editor-length-total" elements
   document.getElementById("editor1-length-total").innerHTML = 
-      "<div id='short1' class='short'>Short Sentences: " + shortCount1 + "</div>" +
+  "<div id='short1' class='short'>Short Sentences: " + shortCount1 + "</div>" +
       "<div id='medium1' class='medium'>Medium Sentences: " + mediumCount1 + "</div>" +
       "<div id='long1' class='long'>Long Sentences: " + longCount1 + "</div>";
+
+      document.getElementById("editor1-emotion-total").innerHTML = 
+      "<div id='anger1' class='anger'>Anger words: " + angerCount1 + "</div>" +
+      "<div id='disgust1' class='disgust'>Disgust words: " + disgustCount1 + "</div>" +
+      "<div id='fear1' class='fear'>Fear words: " + fearCount1 + "</div>" +
+      "<div id='joy1' class='joy'>Joy words: " + joyCount1 + "</div>" +
+      "<div id='sadness1' class='sadness'>Sad words: " + sadnessCount1 + "</div>";
+
+      document.getElementById("editor1-language-total").innerHTML = 
+      "<div id='analytical1' class='analytical'>Analytical words: " + analyticalCount1 + "</div>" +
+      "<div id='tentative1' class='tentative'>Tentative words: " + tentativeCount1 + "</div>" +
+      "<div id='confident1' class='confident'>Confident words: " + confidentCount1 + "</div>";
+
 
       document.getElementById("editor2-length-total").innerHTML = 
       "<div id='short2' class='short'>Short Sentences: " + shortCount2 + "</div>" +
       "<div id='medium2' class='medium'>Medium Sentences: " + mediumCount2 + "</div>" +
       "<div id='long2' class='long'>Long Sentences: " + longCount2 + "</div>";
+
+      document.getElementById("editor2-emotion-total").innerHTML = 
+      "<div id='anger2' class='anger'>Anger words: " + angerCount2 + "</div>" +
+      "<div id='disgust2' class='disgust'>Disgust words: " + disgustCount2 + "</div>" +
+      "<div id='fear2' class='fear'>Fear words: " + fearCount2 + "</div>" +
+      "<div id='joy2' class='joy'>Joy words: " + joyCount2 + "</div>" +
+      "<div id='sadness2' class='sadness'>Sad words: " + sadnessCount2 + "</div>";
+
+      document.getElementById("editor2-language-total").innerHTML = 
+      "<div id='analytical2' class='analytical'>Analytical words: " + analyticalCount2 + "</div>" +
+      "<div id='tentative2' class='tentative'>Tentative words: " + tentativeCount2 + "</div>" +
+      "<div id='confident2' class='confident'>Confident words: " + confidentCount2 + "</div>";
 }
 
 // Run function on page load
@@ -443,59 +503,7 @@ window.onload = analyzeLengths;
 </script>
 
 <!-- Anger Analysis-->
-<script>
- // Function to get list of "anger" words
-function getAngerWords() {
-  return ["angry", "mad", "irritated", "frustrated"];
-}
 
-// Initialize anger scores
-var angerScore1 = 0;
-var angerScore2 = 0;
-
-// Function to analyze and return anger scores
-function analyzeAnger() {
-  // Get elements with IDs "editor1" and "editor2"
-  var editor1 = document.getElementById("editor1");
-  var editor2 = document.getElementById("editor2");
-
-  // Get all words within "editor1"
-  var words1 = editor1.textContent.split("");
-  // Loop through words and check against "anger" words list
-  for (var i = 0; i < words1.length; i++) {
-    if (getAngerWords().includes(words1[i].toLowerCase())) {
-      // Wrap matched word in <span> with class "anger"
-      words1[i] = `<span class="anger">${words1[i]}</span>`;
-      // Increase anger score
-      angerScore1++;
-    }
-  }
-  // Set text content of "editor1" to modified words
-  editor1.innertext= words1.join("");
-
-  // Get all words within "editor2"
-  var words2 = editor2.textContent.split(" ");
-  // Loop through words and check against "anger" words list
-  for (var i = 0; i < words2.length; i++) {
-    if (getAngerWords().includes(words2[i].toLowerCase())) {
-      // Wrap matched word in <span> with class "anger"
-      words2[i] = `<span class="anger">${words2[i]}</span>`;
-      // Increase anger score
-      angerScore2++;
-    }
-  }
-  // Set text content of "editor2" to modified words
-  editor2.innertext = words2.join(" ");
-
-  // Append anger scores to respective "editor-anger-total" elements
-  document.getElementById("editor1-anger-total").innerHTML = "<div style='padding: 20px;'><b>Anger Score: </b>" + angerScore1 + "</div>";
-  document.getElementById("editor2-anger-total").innerHTML = "Anger Score: " + angerScore2;
-}
-
-// Run function on page load
-window.onload = analyzeAnger;
-
-</script>
 
     <!-- Imported editor script -->
     <script>

@@ -121,6 +121,7 @@
 .passive {
   background: #c4ed9d;
   overflow-y: auto;
+
 }
 .complex {
   background: #e3b7e8;
@@ -139,6 +140,42 @@
   background: #e4b9b9;
   overflow-y: auto;
 }
+
+.disgust {
+  background: #c4ed9d;
+  overflow-y: auto;
+}
+
+.fear {
+  background: #c4ed9d;
+  overflow-y: auto;
+}
+
+.joy {
+  background: #c4ed9d;
+  overflow-y: auto;
+}
+
+.sadness {
+  background: #c4ed9d;
+  overflow-y: auto;
+}
+
+.confident {
+  background: #1f375b29;
+  overflow-y: auto;
+}
+
+.analytical {
+  background: #f7ecb580;
+  overflow-y: auto;
+}
+
+.tentative {
+  background: #e4b9b9cc;
+  overflow-y: auto;
+}
+
 
 .short {
   /*   background: #e4b9b9cc; */

@@ -113,6 +113,7 @@ Analyzer.prototype.setup = function () {
           <div id="hard" class="mb-1 hard counter"></div>
           <div id="vhard" class="mb-1 vhard counter"></div>
           <div id="angerwords" class="mb-1 anger counter"></div>
+          <div id="disgustwords" class="mb-1 disgust counter"></div>
                    <div id='punctuation' class='' style="padding:20px;"></div>
          </div>
        </div>
@@ -434,6 +435,13 @@ Analyzer.prototype.processParagraph = function (p, idx) {
     sent = this.getPassive(sent);
     sent = this.getQualifier(sent);
     sent = this.getAnger(sent);
+    sent = this.getDisgust(sent);
+    sent = this.getFear(sent);
+    sent = this.getJoy(sent);
+    sent = this.getSadness(sent);
+    sent = this.getAnalytical(sent);
+    sent = this.getConfident(sent);
+    sent = this.getTentative(sent);
     let level = this.calculateLevel(letters, words, 1);
 
     if (words < 4) {
@@ -531,15 +539,28 @@ Analyzer.prototype.report = function () {
       );
   }
 
-  $("#angerwords").hide();
-  if (this.data.anger) {
+  if (this.data.angerwordmatch) {
     $("#angerwords")
       .show()
       .html(
-        `<span class='anger'>${this.data.anger}</span> use${this.data.anger > 1 ? "s" : ""
+        `<span class='anger'>${this.data.angerwordmatch}</span> use${this.data.angerwordmatch > 1 ? "s" : ""
         } of Anger.`
       );
+  } else {
+    $("#angerwords").hide();
   }
+
+  if (this.data.disgustwordmatch) {
+    $("#disgustwords")
+      .show()
+      .html(
+        `<span class='disgust'>${this.data.disgustwordmatch}</span> use${this.data.disgustwordmatch > 1 ? "s" : ""
+        } of Disgust.`
+      );
+  } else {
+    $("#disgustwords").hide();
+  }
+
 
 // Anger,   Disgust,  Fear,  Joy,  Sadness; 
 // Language: Analytical, Confident, Tentative
@@ -687,7 +708,70 @@ Analyzer.prototype.getAnger = function (sentence) {
   let angerwordmatch = this.getAngerWords();
   let wordList = Object.keys(angerwordmatch);
   wordList.forEach((key) => {
-    sentence = this.findAndSpan(sentence, key, "angerwordmatch");
+    sentence = this.findAndSpan(sentence, key, "anger");
+  });
+  return sentence;
+};
+
+Analyzer.prototype.getDisgust = function (sentence) {
+  let disgustwordmatch = this.getDisgustWords();
+  let wordList = Object.keys(disgustwordmatch);
+  wordList.forEach((key) => {
+    sentence = this.findAndSpan(sentence, key, "disgust");
+  });
+  return sentence;
+};
+
+Analyzer.prototype.getFear = function (sentence) {
+  let fearwordmatch = this.getFearWords();
+  let wordList = Object.keys(fearwordmatch);
+  wordList.forEach((key) => {
+    sentence = this.findAndSpan(sentence, key, "fear");
+  });
+  return sentence;
+};
+
+Analyzer.prototype.getJoy = function (sentence) {
+  let joywordmatch = this.getJoyWords();
+  let wordList = Object.keys(joywordmatch);
+  wordList.forEach((key) => {
+    sentence = this.findAndSpan(sentence, key, "joy");
+  });
+  return sentence;
+};
+
+Analyzer.prototype.getSadness = function (sentence) {
+  let sadnesswordmatch = this.getSadnessWords();
+  let wordList = Object.keys(sadnesswordmatch);
+  wordList.forEach((key) => {
+    sentence = this.findAndSpan(sentence, key, "sadness");
+  });
+  return sentence;
+};
+
+Analyzer.prototype.getAnalytical = function (sentence) {
+  let analyticalwordmatch = this.getAnalyticalWords();
+  let wordList = Object.keys(analyticalwordmatch);
+  wordList.forEach((key) => {
+    sentence = this.findAndSpan(sentence, key, "analytical");
+  });
+  return sentence;
+};
+
+Analyzer.prototype.getConfident = function (sentence) {
+  let confidentwordmatch = this.getConfidentWords();
+  let wordList = Object.keys(confidentwordmatch);
+  wordList.forEach((key) => {
+    sentence = this.findAndSpan(sentence, key, "confident");
+  });
+  return sentence;
+};
+
+Analyzer.prototype.getTentative = function (sentence) {
+  let tentativewordmatch = this.getTentativeWords();
+  let wordList = Object.keys(tentativewordmatch);
+  wordList.forEach((key) => {
+    sentence = this.findAndSpan(sentence, key, "tentative");
   });
   return sentence;
 };
@@ -724,7 +808,7 @@ Analyzer.prototype.calculateLevel = function (letters, words, sentences) {
 
 Analyzer.prototype.findAndSpan = function (sentence, string, type) {
   let index = sentence.toLowerCase().indexOf(string);
-  let a = { complex: "complex", qualifier: "adverbs", anger: "anger" };
+  let a = { complex: "complex", qualifier: "adverbs", anger: "angerwordmatch", disgust: "disgustwordmatch", fear: "fearwordmatch", joy: "joywordmatch", sadness: "sadnesswordmatch", analytical: "analyticalwordmatch", confident: "confidentwordmatch", tentative: "tentativewordmatch"};
   if (index >= 0) {
     if (
       (index > 0 &&
@@ -1236,5 +1320,47 @@ Analyzer.prototype.getAngerWords = function () {
   return {
     "angry": 1,
     "mad": 1,
+  };
+};
+
+Analyzer.prototype.getDisgustWords = function () {
+  return {
+    "disgust": 1,
+  };
+};
+
+Analyzer.prototype.getFearWords = function () {
+  return {
+    "fear": 1,
+  };
+};
+
+Analyzer.prototype.getJoyWords = function () {
+  return {
+    "joy": 1,
+  };
+};
+
+Analyzer.prototype.getSadnessWords = function () {
+  return {
+    "sadness": 1,
+  };
+};
+
+Analyzer.prototype.getConfidentWords = function () {
+  return {
+    "confident": 1,
+  };
+};
+
+Analyzer.prototype.getAnalyticalWords = function () {
+  return {
+    "analytical": 1,
+  };
+};
+
+Analyzer.prototype.getTentativeWords = function () {
+  return {
+    "tentative": 1,
   };
 };
