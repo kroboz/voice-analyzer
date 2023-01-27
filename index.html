@@ -17,11 +17,8 @@
     <script src="auth.js"></script>
     <script src="divChangeMonitor.js"></script>
     <script src="vaderSentiment.bundle.js"></script>
-    <script src="readability.js"></script>
     <script src="Chart.min.js"></script>
     <script src="Watson-NLP.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/textstat@0.2.0/textstat.min.js"></script>
-
     <script src="https://cdn.polyfill.io/v2/polyfill.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.3.1.min.js" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
@@ -118,35 +115,17 @@
                 <!-- Readability Toggle-->
                 <div id="Readability-Toggle" class="collapse show all-collapse" aria-labelledby="readability-button">
                     <div class="card" style="margin-bottom:20px">
-                        <h5 class="card-header">Readability</h5>
+                        <h5 class="card-header">Overview</h5>
                         <div class="card-body">
                             <div class="container" style="padding:0px;">
                                 <div class="row p-0" style="padding:0px;">
                                     <div class="col-6 p-0 border-end">
-                                        <div id="gradelevel_editor1" style="padding-left:20px;"></div>
+                                        <div style="padding-left:20px;"><b>Flesch-Kincaid Score:</b> <span id="gradelevel_editor1" class="fadein-out" style="padding-left:0px;"></span></div>
                                         <div id="readability-report1"></div>
                                     </div>
                                     <div class="col-6 p-0">
-                                        <div id="gradelevel_editor2" style="padding-left:20px;"></div>
+                                        <div style="padding-left:20px;"><b>Flesch-Kincaid Score:</b> <span id="gradelevel_editor2" style="padding-left:0px;"></span></div>
                                         <div id="readability-report2"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- Vocabulary Toggle-->
-                <div id="Vocabulary-Toggle" class="collapse show all-collapse">
-                    <div class="card" style="margin-bottom:20px">
-                        <h5 class="card-header">Vocabulary</h5>
-                        <div class="card-body">
-                            <div class="container" style="padding:0px;">
-                                <div class="row p-0" style="padding:0px;">
-                                    <div class="col-6 p-0 border-end">
-                                        <div id="vocab-report1"></div>
-                                    </div>
-                                    <div class="col-6 p-0 border-end">
-                                        <div id="vocab-report2"></div>
                                     </div>
                                 </div>
                             </div>
@@ -162,31 +141,55 @@
                                 <div class="row p-0" style="padding:20px;">
                                     <div class="col-6 p-0 border-end">
                                         <div id="sentiment-results1"></div>
+                                        <div style="padding-top: 20px; padding-left: 20px;"><h5>Emotion</h5></div>
+                                        <div style="padding-left:20px;"><span id="editor1-anger-total"></span> % Angry words</div>
+                                        <div style="padding-left:20px;"><span id="editor1-disgust-total"></span> % Disgust words </span></div>
+                                        <div style="padding-left:20px;"><span id="editor1-fear-total"></span> % Fear words </div>
+                                        <div style="padding-left:20px;"><span id="editor1-joy-total"></span> % Joy words </div>
+                                        <div style="padding-left:20px;"><span id="editor1-sadness-total"></span> % Sadness words </div>
+                                        <div style="padding-top: 20px; padding-left: 20px;"><h5>Language</h5></div>
+                                        <div style="padding-left:20px;"><span id="editor1-analytical-total"></span> % Analytical words </div>
+                                        <div style="padding-left:20px;"><span id="editor1-confident-total"></span> % Confident words </div>
+                                        <div style="padding-left:20px;"><span id="editor1-tentative-total"></span>Tentative: </div>
                                     </div>
                                     <div class="col-6 p-0" style="padding:20px;">
                                         <div id="sentiment-results2" style="padding-left:20px;"></div>
+                                        <div style="padding-top: 20px; padding-left: 20px;"><h5>Emotion</h5></div>
+                                        <div style="padding-left:20px;"><span id="editor2-anger-total"></span> % Angry words</div>
+                                        <div style="padding-left:20px;"><span id="editor2-disgust-total"></span> % Disgust words </span></div>
+                                        <div style="padding-left:20px;"><span id="editor2-fear-total"></span> % Fear words </div>
+                                        <div style="padding-left:20px;"><span id="editor2-joy-total"></span> % Joy words </div>
+                                        <div style="padding-left:20px;"><span id="editor2-sadness-total"></span> % Sadness words </div>
+                                        <div style="padding-top: 20px; padding-left: 20px;"><h5>Language</h5></div>
+                                        <div style="padding-left:20px;"><span id="editor2-analytical-total"></span> % Analytical words </div>
+                                        <div style="padding-left:20px;"><span id="editor2-confident-total"></span> % Confident words </div>
+                                        <div style="padding-left:20px;"><span id="editor2-tentative-total"></span>Tentative: </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <!-- Cadence Toggle-->
-                <div id="Cadence-Toggle" class="collapse show all-collapse">
-                    <div class="card" style="margin-bottom:20px;">
-                        <h5 class="card-header">Cadence</h5>
-                        <div class="card-body" style="padding:20px;">
-                            <div class="container" style="padding:20px;">
-                                <div class="row p-0">
+                <!-- Vocabulary Toggle-->
+                <div id="Vocabulary-Toggle" class="collapse show all-collapse">
+                    <div class="card" style="margin-bottom:20px">
+                        <h5 class="card-header">Vocabulary & Cadence</h5>
+                        <div class="card-body">
+                            <div class="container" style="padding:0px;">
+                                <div class="row p-0" style="padding:0px;">
                                     <div class="col-6 p-0 border-end">
+                                        <div id="vocab-report1"></div>
                                         <div id="cadence-report1"></div>
+                                        <div id="editor1-length-total" style="padding:20px;"></div>
                                         <div id="chart-container" style="padding:20px;">
-
                                             <canvas id="sentence-counts1"></canvas>
                                         </div>
+
                                     </div>
-                                    <div class="col-6 p-0">
+                                    <div class="col-6 p-0 border-end">
+                                        <div id="vocab-report2"></div>
                                         <div id="cadence-report2"></div>
+                                        <div id="editor2-length-total" style="padding:20px;"></div>
                                         <div id="chart-container2" style="padding:20px;">
                                             <canvas id="sentence-counts2"></canvas>
                                         </div>
@@ -340,33 +343,159 @@
     <!-- Grade Level Script -->
 
     <script>
+    let previousEditor1 = "";
+    let previousEditor2 = "";
+    let myInterval = setInterval(function() {
         let editor1 = document.getElementById("editor1").innerHTML;
         let editor2 = document.getElementById("editor2").innerHTML;
-
-        // Replace line breaks, paragraphs, and quotation marks/apostrophes with spaces
-        editor1 = editor1.replace(/(\r\n|\n|\r|\")/gm, " ");
-        editor2 = editor2.replace(/(\r\n|\n|\r|\")/gm, " ");
-
-        fetch('https://matthallcommon.pythonanywhere.com/grade_level', {
-            method: 'POST',
-            body: JSON.stringify({ 'Editor 1': editor1, 'Editor 2': editor2 }),
-            headers: { 'Content-Type': 'application/json' }
-        })
-            .then(res => res.json())
-            .then(data => {
-                console.log(data);
-                let grade_level_editor1 = data.grade_level_editor1;
-                let grade_level_editor2 = data.grade_level_editor2;
-                // Append results to the <div> elements
-                // document.getElementById("gradelevel_editor1").innerHTML = grade_level_editor1;
-                // document.getElementById("gradelevel_editor2").innerHTML = grade_level_editor2;
-                $("#gradelevel_editor1").append(`<b>Grade Level:</b> ${grade_level_editor1}`);
-                $("#gradelevel_editor2").append(`<b>Grade Level:</b> ${grade_level_editor2}`);
+        if(previousEditor1 !== editor1 || previousEditor2 !== editor2){
+            clearInterval(myInterval);
+            previousEditor1 = editor1;
+            previousEditor2 = editor2;
+            // Replace line breaks, paragraphs, and quotation marks/apostrophes with spaces
+            editor1 = editor1.replace(/(\r\n|\n|\r|\")/gm, " ");
+            editor2 = editor2.replace(/(\r\n|\n|\r|\")/gm, " ");
+            fetch('https://matthallcommon.pythonanywhere.com/grade_level', {
+                method: 'POST',
+                body: JSON.stringify({ 'Editor 1': editor1, 'Editor 2': editor2 }),
+                headers: { 'Content-Type': 'application/json' }
             })
-            .catch(err => console.error(err));
-    </script>
+                .then(res => res.json())
+                .then(data => {
+                    console.log(data);
+                    let grade_level_editor1 = data.grade_level_editor1;
+                    let grade_level_editor2 = data.grade_level_editor2;
+                    // Replace the innerHTML of the divs with the new values
+                    document.getElementById("gradelevel_editor1").innerHTML = grade_level_editor1;
+                    document.getElementById("gradelevel_editor2").innerHTML = grade_level_editor2;
+                })
+                .catch(err => console.error(err));
+            myInterval = setInterval(arguments.callee, 2500);
+        }
+    }, 2500);
+</script>
 
 
+
+<script>
+
+// Function to analyze and return length counts
+function analyzeLengths() {
+  // Initialize counts
+  var shortCount1 = 0;
+  var mediumCount1 = 0;
+  var longCount1 = 0;
+  var shortCount2 = 0;
+  var mediumCount2 = 0;
+  var longCount2 = 0;
+
+  // Get elements with IDs "editor1" and "editor2"
+  var editor1 = document.getElementById("editor1");
+  var editor2 = document.getElementById("editor2");
+
+  // Get all span elements within "editor1"
+  var spans1 = editor1.getElementsByTagName("span");
+  // Loop through spans and count by class name
+  for (var i = 0; i < spans1.length; i++) {
+    if (spans1[i].className === "short" && spans1[i].textContent.trim() === "") {
+      spans1[i].remove();
+    }
+    else if (spans1[i].className === "short") {
+      shortCount1++;
+    } else if (spans1[i].className === "medium") {
+      mediumCount1++;
+    } else if (spans1[i].className === "long") {
+      longCount1++;
+    }
+  }
+
+  // Get all span elements within "editor2"
+  var spans2 = editor2.getElementsByTagName("span");
+  // Loop through spans and count by class name
+  for (var i = 0; i < spans2.length; i++) {
+if (spans2[i].className === "short" && spans2[i].textContent.trim() === "") {
+spans2[i].remove();
+}
+else if (spans2[i].className === "short") {
+shortCount2++;
+} else if (spans2[i].className === "medium") {
+mediumCount2++;
+} else if (spans2[i].className === "long") {
+longCount2++;
+}
+}
+
+  // Append counts to respective "editor-length-total" elements
+  document.getElementById("editor1-length-total").innerHTML = 
+      "<div id='short1' class='short'>Short Sentences: " + shortCount1 + "</div>" +
+      "<div id='medium1' class='medium'>Medium Sentences: " + mediumCount1 + "</div>" +
+      "<div id='long1' class='long'>Long Sentences: " + longCount1 + "</div>";
+
+      document.getElementById("editor2-length-total").innerHTML = 
+      "<div id='short2' class='short'>Short Sentences: " + shortCount2 + "</div>" +
+      "<div id='medium2' class='medium'>Medium Sentences: " + mediumCount2 + "</div>" +
+      "<div id='long2' class='long'>Long Sentences: " + longCount2 + "</div>";
+}
+
+// Run function on page load
+window.onload = analyzeLengths;
+
+</script>
+
+<!-- Anger Analysis-->
+<script>
+ // Function to get list of "anger" words
+function getAngerWords() {
+  return ["angry", "mad", "irritated", "frustrated"];
+}
+
+// Initialize anger scores
+var angerScore1 = 0;
+var angerScore2 = 0;
+
+// Function to analyze and return anger scores
+function analyzeAnger() {
+  // Get elements with IDs "editor1" and "editor2"
+  var editor1 = document.getElementById("editor1");
+  var editor2 = document.getElementById("editor2");
+
+  // Get all words within "editor1"
+  var words1 = editor1.textContent.split("");
+  // Loop through words and check against "anger" words list
+  for (var i = 0; i < words1.length; i++) {
+    if (getAngerWords().includes(words1[i].toLowerCase())) {
+      // Wrap matched word in <span> with class "anger"
+      words1[i] = `<span class="anger">${words1[i]}</span>`;
+      // Increase anger score
+      angerScore1++;
+    }
+  }
+  // Set text content of "editor1" to modified words
+  editor1.innertext= words1.join("");
+
+  // Get all words within "editor2"
+  var words2 = editor2.textContent.split(" ");
+  // Loop through words and check against "anger" words list
+  for (var i = 0; i < words2.length; i++) {
+    if (getAngerWords().includes(words2[i].toLowerCase())) {
+      // Wrap matched word in <span> with class "anger"
+      words2[i] = `<span class="anger">${words2[i]}</span>`;
+      // Increase anger score
+      angerScore2++;
+    }
+  }
+  // Set text content of "editor2" to modified words
+  editor2.innertext = words2.join(" ");
+
+  // Append anger scores to respective "editor-anger-total" elements
+  document.getElementById("editor1-anger-total").innerHTML = "<div style='padding: 20px;'><b>Anger Score: </b>" + angerScore1 + "</div>";
+  document.getElementById("editor2-anger-total").innerHTML = "Anger Score: " + angerScore2;
+}
+
+// Run function on page load
+window.onload = analyzeAnger;
+
+</script>
 
     <!-- Imported editor script -->
     <script>
@@ -468,78 +597,6 @@
     </script>
 
 
-    <!-- See https://www.textcompare.org/readability/flesch-kincaid-grade-level for sample -->
-
-
-    <!-- Toggle button for highlighting -->
-    <script>
-        let highlighted = false;  // flag variable to track the current state of the highlighting effect
-
-        const button = document.querySelector("#cadence-highlight");  // select the button element
-        const divs = document.querySelectorAll("#editor1, #editor2");  // select the div elements
-
-        button.addEventListener("click", () => {
-            if (highlighted) {
-                // remove the highlighting effect by setting the text content of the div elements to the original text
-                divs.forEach(div => {
-                    div.innerHTML = div.dataset.originalHtml;
-                });
-            } else {
-                // apply the highlighting effect
-                divs.forEach(div => {
-                    // get the text content of the div element
-                    const text = div.textContent;
-                    div.dataset.originalHtml = div.innerHTML;  // store the original HTML in a data attribute
-
-                    // split the text into an array of paragraphs
-                    const paragraphs = text.split("\n");
-
-                    // clear the text content of the div element
-                    div.textContent = "";
-
-                    paragraphs.forEach((paragraph, paragraphIndex) => {
-                        // create a new p element for each paragraph
-                        const p = document.createElement("p");
-
-                        // split the paragraph into an array of sentences using a modified regular expression as the delimiter
-                        paragraph = paragraph.replace(/\.\.\. /g, " ");
-                        var sentences = paragraph.match(/[^.!?]+[.!?]/g);
-
-                        console.log("sentences from cadence " + sentences);
-                        sentences.forEach((sentence, sentenceIndex) => {
-                            // create a new span element for each sentence
-                            const span = document.createElement("span");
-
-                            // set the background color of the span based on the index of the sentence
-                            if ((paragraphIndex + sentenceIndex) % 2 === 0) {
-                                span.style.backgroundColor = "#1f375b50";  // modified color
-                            } else {
-                                span.style.backgroundColor = "#f9ad3650";  // modified color
-                            }
-
-                            // set the text content of the span to be the sentence
-                            span.textContent = sentence;
-
-                            // append the span to the p element
-                            p.appendChild(span);
-                        });
-
-                        // check if the p element only contains a single span element with a single period
-                        if (p.childNodes.length === 1 && p.firstChild.textContent === ".") {
-                            // skip appending the p element if it meets the condition
-                            return;
-                        }
-
-                        // append the p element to the div element
-                        div.appendChild(p);
-                    });
-                });
-            }
-
-            highlighted = !highlighted;  // toggle the value of the flag variable
-        });
-
-    </script>
 
 
     <div class="row bg-blue p-4 justify-content-center white">

@@ -36,7 +36,7 @@ success: (data) => {
   const html = `
     <div>
       <b>Tone:</b> ${sentimentLabel}<br>
-      <b>Tone score:</b> ${sentimentScore}<br>
+      <b>Tone score (-100 to 100):</b> ${sentimentScore.toFixed(0)}<br>
 <b>&nbsp;</b><br>
 <b>Emotional Sentiment</b></br>
 <b>Sadness:</b> ${emotionSadness}</br> 

@@ -1,9 +1,9 @@
-var myBarChart2=null;
+var myBarChart2 = null;
 // Define a function to create the chart
 function createChartSecond() {
-  if(myBarChart2!=null){
-        myBarChart2.destroy();
-    }
+  if (myBarChart2 != null) {
+    myBarChart2.destroy();
+  }
   // Get the div element with the ID "editor2"
   var editor2 = document.getElementById("editor2");
 
@@ -12,9 +12,6 @@ function createChartSecond() {
 
   // Split the text into an array of sentences by splitting on the period, exclamation mark, and question mark characters
   var sentences = text.split(/[.!?]/);
-
-  // filter out any empty sentences
-sentences = sentences.filter(s => s.trim().length > 0);
 
   // Create an array to store the number of words in each sentence
   var wordCounts = [];
@@ -30,18 +27,21 @@ sentences = sentences.filter(s => s.trim().length > 0);
     // Split the sentence into an array of words
     var words = sentence.split(" ");
 
+        // Check if the sentence has more than one character
+    if (sentence.trim().length > 1) {
+
     // Add the number of words in the sentence to the array
     wordCounts.push(words.length);
 
-  // Get the number of items in the chart
-  var numItems = wordCounts.length;
-
-// Calculate the desired height of the chart
-var chartHeight = numItems * 30;
-
     // Add a label for the current bar in the chart
-    labels.push('Sentence ' + (i+1));
+    labels.push('Sentence ' + (i + 1));
   }
+}
+    // Get the number of items in the chart
+    var numItems = wordCounts.length;
+
+    // Calculate the desired height of the chart
+    var chartHeight = (numItems * 30) + 100;
 
   // Set up the data for the chart
   var data = {
@@ -62,18 +62,17 @@ var chartHeight = numItems * 30;
     maintainAspectRatio: false,
     responsive: true,
     scales: {
-      xAxes: [{
+      yAxes: [{
         ticks: {
           beginAtZero: true
         }
       }],
     },
-        // Set the height of the chart
-        height: chartHeight
+    // Set the height of the chart
+    height: chartHeight
   };
 
   document.getElementById("chart-container2").style.height = chartHeight + "px";
-
 
   // Get the canvas element where the chart will be drawn
   var ctx = document.getElementById('sentence-counts2').getContext('2d');

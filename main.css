@@ -12,13 +12,14 @@
 }
 
 
-$container-max-widths: (
+/* $container-max-widths: (
   sm: 540px,
   md: 720px,
   lg: 1200px,
   xl: 1140px,
   xxl: 1320px
 );
+*/
 
 .h1.a,.h4,.h3,.h2,.h1 {
     color:#1f375b;
@@ -41,7 +42,7 @@ $container-max-widths: (
 }
 
 .bg-gray {
-    background-color: ##e8e8e8;
+    background-color: #e8e8e8;
 }
 
 .bg-blue:link, .bg-blue:visited, bg-blue.li:link, bg-blue.li:visited {
@@ -82,7 +83,7 @@ $container-max-widths: (
 #editor-wrapper {
   position: relative;
 }
-#editor {
+#editor, #editor1, #editor2 {
   width: 100%;
   border: none;
   z-index: 1;
@@ -96,6 +97,13 @@ $container-max-widths: (
   right: 10px;
   z-index: -1;
   overflow-y: auto;
+}
+
+.result-div {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  z-index: -1;
 }
 
 .adverb, .qualifier, .passive, .complex, .hard, .vhard, .highlight-tone-low, .highlight-tone-med, .highlight-tone-high {
@@ -124,6 +132,38 @@ $container-max-widths: (
 }
 .vhard {
   background: #e4b9b9;
+  overflow-y: auto;
+}
+
+.anger {
+  background: #e4b9b9;
+  overflow-y: auto;
+}
+
+.short {
+  /*   background: #e4b9b9cc; */
+  text-decoration: underline;
+  text-decoration-color: #7AC2E1;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 5px;
+  overflow-y: auto;
+}
+
+.medium {
+  /* background:  #f7ecb580; */
+  text-decoration: underline;
+  text-decoration-color: #FCD79C;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 5px;
+  overflow-y: auto;
+}
+
+.long {
+  /* background: /*#1f375b29;*/
+  text-decoration: underline;
+  text-decoration-color: #FFADC2;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 5px;
   overflow-y: auto;
 }
 
@@ -156,4 +196,8 @@ $container-max-widths: (
   color: #ccc;
   background-color: rgba(0, 0, 0, 0.6);
   padding: 0px 2px;
+}
+
+.fade-in-out {
+  transition: all 0.5s ease-in-out;
 }
