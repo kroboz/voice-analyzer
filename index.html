@@ -4,6 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1 shrink-to-fit=no">
+
     <!--Bootstrap stylesheet and CSS overrides-->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
@@ -11,14 +12,18 @@
 
     <!--Required Scripts-->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
-    <script src="analyzer.js"></script>
-
+    <script src="analyzer-alt.js"></script>
+    <script src="analyzer2-alt.js"></script>
     <script src="auth.js"></script>
     <script src="divChangeMonitor.js"></script>
     <script src="vaderSentiment.bundle.js"></script>
+    <script src="readability.js"></script>
     <script src="Chart.min.js"></script>
     <script src="Watson-NLP.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/textstat@0.2.0/textstat.min.js"></script>
+
     <script src="https://cdn.polyfill.io/v2/polyfill.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
         crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/1.9.0/showdown.min.js"></script>
@@ -59,16 +64,29 @@
 
         <button class="btn btn-outline-primary m-1 rounded btn-link" type="button" data-toggle="collapse"
             data-target="#Readability-Toggle" aria-expanded="false" aria-controls="Readability-Toggle"
-            id="readability-button">Overview</button>
+            id="readability-button">Readability</button>
+
+        <button class="btn btn-outline-primary m-1 rounded btn-link" type="button" data-toggle="collapse"
+            data-target="#Vocabulary-Toggle" aria-expanded="false" aria-controls="Vocabulary-Toggle"
+            id="vocabulary-button">Vocabulary</button>
 
         <button class="btn btn-outline-primary m-1 rounded btn-link" type="button" data-toggle="collapse"
             data-target="#Tone-Toggle" aria-expanded="false" aria-controls="Tone-Toggle" id="tone-sentiment">Tone &
             Sentiment</button>
 
-            <button class="btn btn-outline-primary m-1 rounded btn-link" type="button" data-toggle="collapse"
-            data-target="#Vocabulary-Toggle" aria-expanded="false" aria-controls="Vocabulary-Toggle"
-            id="vocabulary-button">Vocabulary</button>
+        <button class="btn btn-outline-primary m-1 rounded btn-link" type="button" data-toggle="collapse"
+            data-target="#Cadence-Toggle" aria-expanded="false" aria-controls="Cadence-Toggle"
+            id="cadence-button">Cadence (Report)</button>
 
+        <button class="btn btn-outline-primary m-1 rounded" id="cadence-highlight" data-toggle="tab"
+            data-target=".cadence-report" role="tab" aria-controls="cadence cadence-sample" aria-selected="false"
+            data-bs-toggle="button"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                class="bi bi-speedometer" viewBox="0 0 16 16">
+                <path
+                    d="M8 2a.5.5 0 0 1 .5.5V4a.5.5 0 0 1-1 0V2.5A.5.5 0 0 1 8 2zM3.732 3.732a.5.5 0 0 1 .707 0l.915.914a.5.5 0 1 1-.708.708l-.914-.915a.5.5 0 0 1 0-.707zM2 8a.5.5 0 0 1 .5-.5h1.586a.5.5 0 0 1 0 1H2.5A.5.5 0 0 1 2 8zm9.5 0a.5.5 0 0 1 .5-.5h1.5a.5.5 0 0 1 0 1H12a.5.5 0 0 1-.5-.5zm.754-4.246a.389.389 0 0 0-.527-.02L7.547 7.31A.91.91 0 1 0 8.85 8.569l3.434-4.297a.389.389 0 0 0-.029-.518z" />
+                <path fill-rule="evenodd"
+                    d="M6.664 15.889A8 8 0 1 1 9.336.11a8 8 0 0 1-2.672 15.78zm-4.665-4.283A11.945 11.945 0 0 1 8 10c2.186 0 4.236.585 6.001 1.606a7 7 0 1 0-12.002 0z" />
+            </svg> Cadence</button>
     </div>
 
     <div class="container-fluid justify-content-center d-flex-row">
@@ -100,24 +118,35 @@
                 <!-- Readability Toggle-->
                 <div id="Readability-Toggle" class="collapse show all-collapse" aria-labelledby="readability-button">
                     <div class="card" style="margin-bottom:20px">
-                        <h5 class="card-header">Overview</h5>
+                        <h5 class="card-header">Readability</h5>
                         <div class="card-body">
                             <div class="container" style="padding:0px;">
                                 <div class="row p-0" style="padding:0px;">
                                     <div class="col-6 p-0 border-end">
-                                        <div style="padding-left:20px;"><b>Flesch-Kincaid Score:</b> <span id="gradelevel_editor1" class="fadein-out" style="padding-left:0px;"></span></div>
-                                        <div style="padding-left:20px;"><b>Sentence Count:</b> <span id="sentence_count_editor1" class="fadein-out" style="padding-left:0px;"></span></div>
-                                        <div style="padding-left:20px;"><b>Character Count:</b> <span id="character_count_editor1" class="fadein-out" style="padding-left:0px;"></span></div>
-                                        <div style="padding-left:20px;"><b>Avg Word Length:</b> <span id="avg_word_editor1" class="fadein-out" style="padding-left:0px;"></span></div>
-                                        <div id="readability-report-editor1"></div>
-                                        <div id="report1-editor1"></div>
+                                        <div id="gradelevel_editor1" style="padding-left:20px;"></div>
+                                        <div id="readability-report1"></div>
                                     </div>
                                     <div class="col-6 p-0">
-                                        <div style="padding-left:20px;"><b>Flesch-Kincaid Score:</b> <span id="gradelevel_editor2" style="padding-left:0px;"></span></div>
-                                        <div style="padding-left:20px;"><b>Sentence Count:</b> <span id="sentence_count_editor2" class="fadein-out" style="padding-left:0px;"></span></div>
-                                        <div style="padding-left:20px;"><b>Character Count:</b> <span id="character_count_editor2" class="fadein-out" style="padding-left:0px;"></span></div>
-                                        <div style="padding-left:20px;"><b>Avg Word Length:</b> <span id="avg_word_editor2" class="fadein-out" style="padding-left:0px;"></span></div>
-                                        <div id="readability-report-editor2"></div>
+                                        <div id="gradelevel_editor2" style="padding-left:20px;"></div>
+                                        <div id="readability-report2"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Vocabulary Toggle-->
+                <div id="Vocabulary-Toggle" class="collapse show all-collapse">
+                    <div class="card" style="margin-bottom:20px">
+                        <h5 class="card-header">Vocabulary</h5>
+                        <div class="card-body">
+                            <div class="container" style="padding:0px;">
+                                <div class="row p-0" style="padding:0px;">
+                                    <div class="col-6 p-0 border-end">
+                                        <div id="vocab-report1"></div>
+                                    </div>
+                                    <div class="col-6 p-0 border-end">
+                                        <div id="vocab-report2"></div>
                                     </div>
                                 </div>
                             </div>
@@ -131,47 +160,33 @@
                         <div class="card-body">
                             <div class="container" style="padding:20px;">
                                 <div class="row p-0" style="padding:20px;">
-                                    <div><button class="btn btn-outline-primary m-1 rounded btn-link" type="button" data-toggle="collapse"
-            id="vocabulary-visual" ata-target="#Vocabulary-Toggle">Toggle Vocabulary/Language Visualizer</button></div>
                                     <div class="col-6 p-0 border-end">
-                                        <div style="padding-top: 20px; padding-left: 20px;"><h5>Emotion</h5></div>
-                                        <div style="padding-left:20px;"><span id="editor1-emotion-total"></span> % Angry words</div>
-                                        <div style="padding-top: 20px; padding-left: 20px;"><h5>Language</h5></div>
-                                        <div style="padding-left:20px;"><span id="editor1-language-total"></span> % Analytical words </div>
+                                        <div id="sentiment-results1"></div>
                                     </div>
                                     <div class="col-6 p-0" style="padding:20px;">
-                                        <div style="padding-top: 20px; padding-left: 20px;"><h5>Emotion</h5></div>
-                                        <div style="padding-left:20px;"><span id="editor2-emotion-total"></span> % Angry words</div>
-                                        <div style="padding-top: 20px; padding-left: 20px;"><h5>Language</h5></div>
-                                        <div style="padding-left:20px;"><span id="editor2-language-total"></span> % Analytical words </div>
+                                        <div id="sentiment-results2" style="padding-left:20px;"></div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <!-- Vocabulary Toggle-->
-                <div id="Vocabulary-Toggle" class="collapse show all-collapse">
-                    <div class="card" style="margin-bottom:20px">
-                        <h5 class="card-header">Vocabulary & Cadence</h5>
-                        <div class="card-body">
-                            <div class="container" style="padding:0px;">
-                                <div class="row p-0" style="padding:0px;">
-                                    <div><button class="btn btn-outline-primary m-1 rounded btn-link btn-sm" type="button" data-toggle="collapse"
-            id="tone-visual">Toggle Cadence Visualizer</button></div>
+                <!-- Cadence Toggle-->
+                <div id="Cadence-Toggle" class="collapse show all-collapse">
+                    <div class="card" style="margin-bottom:20px;">
+                        <h5 class="card-header">Cadence</h5>
+                        <div class="card-body" style="padding:20px;">
+                            <div class="container" style="padding:20px;">
+                                <div class="row p-0">
                                     <div class="col-6 p-0 border-end">
-                                        <div id="vocab-report1"></div>
                                         <div id="cadence-report1"></div>
-                                        <div id="editor1-length-total" style="padding:20px;"></div>
                                         <div id="chart-container" style="padding:20px;">
+
                                             <canvas id="sentence-counts1"></canvas>
                                         </div>
-
                                     </div>
-                                    <div class="col-6 p-0 border-end">
-                                        <div id="vocab-report2"></div>
+                                    <div class="col-6 p-0">
                                         <div id="cadence-report2"></div>
-                                        <div id="editor2-length-total" style="padding:20px;"></div>
                                         <div id="chart-container2" style="padding:20px;">
                                             <canvas id="sentence-counts2"></canvas>
                                         </div>
@@ -201,7 +216,7 @@
                                         <p style="color:#cccccc;">Paste some copy you'd like analyzed here.</p>
 
                                         <p>When you click one of the buttons above, you'll see a report based on your
-                                            copy. Fear, disgust, joy, sadness, analytical, confident, tentative, angry.</p>
+                                            copy.</p>
 
                                         <p>It's handy to see places where your voice might align with your client's (or
                                             not). Use this as a place to edit – but don't forget to copy/paste your work
@@ -209,7 +224,7 @@
 
                                         <p>Phrases in green have been marked to show passive voice.</p>
 
-                                        <p>You can format your text with the toolbar. I am angry. Mad I am.</p>
+                                        <p>You can format your text with the toolbar.</p>
 
                                         <p>Paste in something you're working on and edit away. Or, click the Write
                                             button and compose something new.</p>
@@ -238,7 +253,7 @@
                                         <p>I have no idea how you got to this website.</p>
 
                                         <p>Maybe you read about it in some publication. Maybe a friend referred you to
-                                            it. Perhaps you stumbled onto it by pure dumb luck.  Fear, disgust, joy, sadness, analytical, confident, tentative, angry.</p>
+                                            it. Perhaps you stumbled onto it by pure dumb luck.</p>
 
                                         <p>But, however you got here, you have arrived at what is, without question, the
                                             most valuable website on the entire Internet!</p>
@@ -318,203 +333,40 @@
 
     <!-- Footer Scripts -->
 
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"
+        integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.min.js"
         integrity="sha384-w1Q4orYjBQndcko6MimVbzY0tgp4pWB4lZ7lr30WKz0vr/aWKhXdBNmNb5D92v7s"
         crossorigin="anonymous"></script>
 
 
-
-    <!-- Grade Level Script -->
-
-    <script>
-    let previousEditor1 = "";
-    let previousEditor2 = "";
-    let myInterval = setInterval(function() {
-        let editor1 = document.getElementById("editor1").innerHTML;
-        let editor2 = document.getElementById("editor2").innerHTML;
-        if(previousEditor1 !== editor1 || previousEditor2 !== editor2){
-            clearInterval(myInterval);
-            previousEditor1 = editor1;
-            previousEditor2 = editor2;
-            // Replace line breaks, paragraphs, and quotation marks/apostrophes with spaces
-            editor1 = editor1.replace(/(\r\n|\n|\r|\")/gm, " ");
-            editor2 = editor2.replace(/(\r\n|\n|\r|\")/gm, " ");
-            fetch('https://matthallcommon.pythonanywhere.com/grade_level', {
-                method: 'POST',
-                body: JSON.stringify({ 'Editor 1': editor1, 'Editor 2': editor2 }),
-                headers: { 'Content-Type': 'application/json' }
-            })
-                .then(res => res.json())
-                .then(data => {
-                    console.log(data);
-                    let grade_level_editor1 = data.grade_level_editor1;
-                    let grade_level_editor2 = data.grade_level_editor2;
-                    let sentence_count_editor1 = data.sentence_count_editor1;
-                    let character_count_editor1 = data.character_count_editor1;
-                    let letter_count_editor1 = data.letter_count_editor1;
-                    let sentence_count_editor2 = data.sentence_count_editor2;
-                    let character_count_editor2 = data.character_count_editor2;
-                    let letter_count_editor2 = data.letter_count_editor2;
-                    let lexicon_count_editor1 = data.lexicon_count_editor1;
-                    let lexicon_count_editor2 = data.lexicon_count_editor2;
-                    let avg_word_editor1 = (letter_count_editor1/lexicon_count_editor1);
-                    let avg_word_editor2 = (letter_count_editor2/lexicon_count_editor2);
-                    // Replace the innerHTML of the divs with the new values
-                    document.getElementById("gradelevel_editor1").innerHTML = grade_level_editor1;
-                    document.getElementById("gradelevel_editor2").innerHTML = grade_level_editor2;
-                    document.getElementById("sentence_count_editor1").innerHTML = sentence_count_editor1;
-                    document.getElementById("character_count_editor1").innerHTML = character_count_editor1;
-                    document.getElementById("avg_word_editor1").innerHTML = avg_word_editor1;
-                    document.getElementById("avg_word_editor2").innerHTML = avg_word_editor2;
-                })
-                .catch(err => console.error(err));
-            myInterval = setInterval(arguments.callee, 2500);
-        }
-    }, 2500);
-</script>
-
-
+<!-- Grade Level Script -->
 
 <script>
+    let editor1 = document.getElementById("editor1").innerHTML;
+    let editor2 = document.getElementById("editor2").innerHTML;
 
-// Function to analyze and return length counts
-function analyzeLengths() {
-  // Initialize counts
-  var shortCount1 = 0;
-  var mediumCount1 = 0;
-  var longCount1 = 0;
-  var shortCount2 = 0;
-  var mediumCount2 = 0;
-  var longCount2 = 0;
-  var angerCount1 = 0;
-  var disgustCount1 = 0;
-  var fearCount1 = 0; 
-  var joyCount1 = 0;
-  var sadnessCount1 = 0;
-  var analyticalCount1 = 0;
-  var tentativeCount1 = 0;
-  var confidentCount1 = 0;
-  var angerCount2 = 0;
-  var disgustCount2 = 0;
-  var fearCount2 = 0; 
-  var joyCount2 = 0;
-  var sadnessCount2 = 0;
-  var analyticalCount2 = 0;
-  var tentativeCount2 = 0;
-  var confidentCount2 = 0;
+    // Replace line breaks, paragraphs, and quotation marks/apostrophes with spaces
+    editor1 = editor1.replace(/(\r\n|\n|\r|\")/gm, " ");
+    editor2 = editor2.replace(/(\r\n|\n|\r|\")/gm, " ");
 
-  // Get elements with IDs "editor1" and "editor2"
-  var editor1 = document.getElementById("editor1");
-  var editor2 = document.getElementById("editor2");
-
-// Get all span elements within "editor1"
-var spans1 = editor1.getElementsByTagName("span");
-  // Loop through spans and count by class name
-  for (var i = 0; i < spans1.length; i++) {
-    if (spans1[i].className === "short" && spans1[i].textContent.trim() === "") {
-      spans1[i].remove();
-    }
-    else if (spans1[i].className === "short") {
-      shortCount1++;
-    } else if (spans1[i].className === "medium") {
-      mediumCount1++;
-    } else if (spans1[i].className === "long") {
-      longCount1++;
-    } else if (spans1[i].className === "anger") {
-      angerCount1++;
-    } else if (spans1[i].className === "disgust") {
-      disgustCount1++;
-    } else if (spans1[i].className === "fear") {
-      fearCount1++;
-    } else if (spans1[i].className === "joy") {
-      joyCount1++;
-    } else if (spans1[i].className === "sadness") {
-      sadnessCount1++;
-    } else if (spans1[i].className === "analytical") {
-      analyticalCount1++;
-    } else if (spans1[i].className === "tentative") {
-      tentativeCount1++;
-    } else if (spans1[i].className === "confident") {
-      confidentCount1++;
-    }
-  }
-
-  // Get all span elements within "editor2"
-  var spans2 = editor2.getElementsByTagName("span");
-  // Loop through spans and count by class name
-  for (var i = 0; i < spans2.length; i++) {
-if (spans2[i].className === "short" && spans2[i].textContent.trim() === "") {
-spans2[i].remove();
-}
-else if (spans2[i].className === "short") {
-shortCount2++;
-} else if (spans2[i].className === "medium") {
-mediumCount2++;
-} else if (spans2[i].className === "long") {
-longCount2++;
-}
-else if (spans2[i].className === "anger") {
-      angerCount2++;
-    } else if (spans2[i].className === "disgust") {
-      disgustCount2++;
-    } else if (spans2[i].className === "fear") {
-      fearCount2++;
-    } else if (spans2[i].className === "joy") {
-      joyCount2++;
-    } else if (spans2[i].className === "sadness") {
-      sadnessCount2++;
-    } else if (spans2[i].className === "analytical") {
-      analyticalCount2++;
-    } else if (spans2[i].className === "tentative") {
-      tentativeCount2++;
-    } else if (spans2[i].className === "confident") {
-      confidentCount2++;
-    }
-}
-
-  // Append counts to respective "editor-length-total" elements
-  document.getElementById("editor1-length-total").innerHTML = 
-  "<div id='short1' class='short'>Short Sentences: " + shortCount1 + "</div>" +
-      "<div id='medium1' class='medium'>Medium Sentences: " + mediumCount1 + "</div>" +
-      "<div id='long1' class='long'>Long Sentences: " + longCount1 + "</div>";
-
-      document.getElementById("editor1-emotion-total").innerHTML = 
-      "<div id='anger1' class='anger'>Anger words: " + angerCount1 + "</div>" +
-      "<div id='disgust1' class='disgust'>Disgust words: " + disgustCount1 + "</div>" +
-      "<div id='fear1' class='fear'>Fear words: " + fearCount1 + "</div>" +
-      "<div id='joy1' class='joy'>Joy words: " + joyCount1 + "</div>" +
-      "<div id='sadness1' class='sadness'>Sad words: " + sadnessCount1 + "</div>";
-
-      document.getElementById("editor1-language-total").innerHTML = 
-      "<div id='analytical1' class='analytical'>Analytical words: " + analyticalCount1 + "</div>" +
-      "<div id='tentative1' class='tentative'>Tentative words: " + tentativeCount1 + "</div>" +
-      "<div id='confident1' class='confident'>Confident words: " + confidentCount1 + "</div>";
-
-
-      document.getElementById("editor2-length-total").innerHTML = 
-      "<div id='short2' class='short'>Short Sentences: " + shortCount2 + "</div>" +
-      "<div id='medium2' class='medium'>Medium Sentences: " + mediumCount2 + "</div>" +
-      "<div id='long2' class='long'>Long Sentences: " + longCount2 + "</div>";
-
-      document.getElementById("editor2-emotion-total").innerHTML = 
-      "<div id='anger2' class='anger'>Anger words: " + angerCount2 + "</div>" +
-      "<div id='disgust2' class='disgust'>Disgust words: " + disgustCount2 + "</div>" +
-      "<div id='fear2' class='fear'>Fear words: " + fearCount2 + "</div>" +
-      "<div id='joy2' class='joy'>Joy words: " + joyCount2 + "</div>" +
-      "<div id='sadness2' class='sadness'>Sad words: " + sadnessCount2 + "</div>";
-
-      document.getElementById("editor2-language-total").innerHTML = 
-      "<div id='analytical2' class='analytical'>Analytical words: " + analyticalCount2 + "</div>" +
-      "<div id='tentative2' class='tentative'>Tentative words: " + tentativeCount2 + "</div>" +
-      "<div id='confident2' class='confident'>Confident words: " + confidentCount2 + "</div>";
-}
-
-// Run function on page load
-window.onload = analyzeLengths;
-
+    fetch('http://matthallcommon.pythonanywhere.com/grade_level', {
+        method: 'POST',
+        body: JSON.stringify({ 'Editor 1': editor1, 'Editor 2': editor2 }),
+        headers: { 'Content-Type': 'application/json' }
+    })
+        .then(res => res.json())
+        .then(data => {
+            console.log(data);
+            let grade_level_editor1 = data.grade_level_editor1;
+            let grade_level_editor2 = data.grade_level_editor2;
+            // Append results to the <div> elements
+            document.getElementById("gradelevel_editor1").innerHTML = grade_level_editor1;
+            document.getElementById("gradelevel_editor2").innerHTML = grade_level_editor2;
+        })
+        .catch(err => console.error(err));
 </script>
 
-<!-- Anger Analysis-->
 
 
     <!-- Imported editor script -->
@@ -598,7 +450,7 @@ window.onload = analyzeLengths;
             });
         });
 
-        var analyzer2 = new Analyzer({
+        var analyzer2 = new Analyzer2({
             selector: "#editor2",
             reportSelector: "#report2",
         });
@@ -616,45 +468,120 @@ window.onload = analyzeLengths;
         createChartSecond();
     </script>
 
-<!-- Button Toggle for classes -->
 
-<script>
- 
-    document.getElementById("all-collapse-button").addEventListener("click", toggleAll);
-document.getElementById("readability-button").addEventListener("click", toggleReadability);
-document.getElementById("vocabulary-button").addEventListener("click", toggleVocabulary);
-document.getElementById("tone-sentiment").addEventListener("click", toggleCadence);
-document.getElementById("tone-visual").addEventListener("click", toggleCadence);
-document.getElementById("vocabulary-visual").addEventListener("click", toggleVocabulary);
-
-function toggleAll() {
-    var elements = document.querySelectorAll('.short, .medium, .long, .anger, .fear, .disgust, .joy, .sadness, .analytical, .confident, .tentative');
-    for (var i = 0; i < elements.length; i++) {
-        elements[i].classList.toggle('clear');
-    }
-}
-
-function toggleReadability() {
-    // This function does not need to do anything, as the button only toggles the collapsable section
-}
-
-function toggleVocabulary() {
-    var elements = document.querySelectorAll('.anger, .fear, .disgust, .joy, .sadness, .analytical, .confident, .tentative');
-    for (var i = 0; i < elements.length; i++) {
-        elements[i].classList.toggle('clear');
-    }
-}
-
-function toggleCadence() {
-    var elements = document.querySelectorAll('.short, .medium, .long');
-    for (var i = 0; i < elements.length; i++) {
-        elements[i].classList.toggle('clear');
-    }
-}
+    <!-- See https://www.textcompare.org/readability/flesch-kincaid-grade-level for sample -->
 
 
-</script>
+    <!-- Toggle button for highlighting -->
+    <script>
+        let highlighted = false;  // flag variable to track the current state of the highlighting effect
 
+        const button = document.querySelector("#cadence-highlight");  // select the button element
+        const divs = document.querySelectorAll("#editor1, #editor2");  // select the div elements
+
+        button.addEventListener("click", () => {
+            if (highlighted) {
+                // remove the highlighting effect by setting the text content of the div elements to the original text
+                divs.forEach(div => {
+                    div.innerHTML = div.dataset.originalHtml;
+                });
+            } else {
+                // apply the highlighting effect
+                divs.forEach(div => {
+                    // get the text content of the div element
+                    const text = div.textContent;
+                    div.dataset.originalHtml = div.innerHTML;  // store the original HTML in a data attribute
+
+                    // split the text into an array of paragraphs
+                    const paragraphs = text.split("\n");
+
+                    // clear the text content of the div element
+                    div.textContent = "";
+
+                    paragraphs.forEach((paragraph, paragraphIndex) => {
+                        // create a new p element for each paragraph
+                        const p = document.createElement("p");
+
+                        // split the paragraph into an array of sentences using a modified regular expression as the delimiter
+                        paragraph = paragraph.replace(/\.\.\. /g, " ");
+                        var sentences = paragraph.match(/[^.!?]+[.!?]/g);
+
+                        console.log("sentences from cadence " + sentences);
+                        sentences.forEach((sentence, sentenceIndex) => {
+                            // create a new span element for each sentence
+                            const span = document.createElement("span");
+
+                            // set the background color of the span based on the index of the sentence
+                            if ((paragraphIndex + sentenceIndex) % 2 === 0) {
+                                span.style.backgroundColor = "#1f375b50";  // modified color
+                            } else {
+                                span.style.backgroundColor = "#f9ad3650";  // modified color
+                            }
+
+                            // set the text content of the span to be the sentence
+                            span.textContent = sentence;
+
+                            // append the span to the p element
+                            p.appendChild(span);
+                        });
+
+                        // check if the p element only contains a single span element with a single period
+                        if (p.childNodes.length === 1 && p.firstChild.textContent === ".") {
+                            // skip appending the p element if it meets the condition
+                            return;
+                        }
+
+                        // append the p element to the div element
+                        div.appendChild(p);
+                    });
+                });
+            }
+
+            highlighted = !highlighted;  // toggle the value of the flag variable
+        });
+
+    </script>
+
+
+    <script>
+        // Get the content of the <div> with the ID "editor1"
+        var editorContent1 = document.getElementById("editor1").innerHTML;
+        // Get the content of the <div> with the ID "editor2"
+        var editorContent2 = document.getElementById("editor2").innerHTML;
+
+        // Create a new XMLHttpRequest object
+        var xhr = new XMLHttpRequest();
+
+        // Define the request method, URL, and boolean for asynchronous
+        xhr.open("POST", "http://matthallcommon.pythonanywhere.com/grade_level", true);
+
+        // Set the request header for the content type
+        xhr.setRequestHeader("Content-Type", "application/json");
+
+        // Send the request for editor1
+        xhr.send(JSON.stringify({ text: editorContent1 }));
+
+        // Define a function to handle the response
+        xhr.onload = function () {
+            // Parse the response JSON
+            var response = JSON.parse(xhr.response);
+            // Get the grade level
+            var grade_level1 = response.grade_level;
+            // Display the result in a <div> with the ID "gradelevel1"
+            document.getElementById("gradelevel1").innerHTML = grade_level1;
+            // Create a new XMLHttpRequest object for editor2
+            var xhr2 = new XMLHttpRequest();
+            xhr2.open("POST", "http://matthallcommon.pythonanywhere.com/", true);
+            xhr2.setRequestHeader("Content-Type", "application/json");
+            xhr2.send(JSON.stringify({ text: editorContent2 }));
+
+            xhr2.onload = function () {
+                var response2 = JSON.parse(xhr2.response);
+                var grade_level2 = response2.grade_level;
+                document.getElementById("gradelevel2").innerHTML = 'Smart Grade Level= ${grade_level2}';
+            }
+        }
+    </script>
 
     <div class="row bg-blue p-4 justify-content-center white">
         <p>Footer goes here</p>

@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -12,8 +11,7 @@
 
     <!--Required Scripts-->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
-    <script src="analyzer-alt.js"></script>
-    <script src="analyzer2-alt.js"></script>
+    <script src="analyzer.js"></script>
     <script src="auth.js"></script>
     <script src="divChangeMonitor.js"></script>
     <script src="vaderSentiment.bundle.js"></script>
@@ -107,11 +105,18 @@
                                 <div class="row p-0" style="padding:0px;">
                                     <div class="col-6 p-0 border-end">
                                         <div style="padding-left:20px;"><b>Flesch-Kincaid Score:</b> <span id="gradelevel_editor1" class="fadein-out" style="padding-left:0px;"></span></div>
-                                        <div id="readability-report1"></div>
+                                        <div style="padding-left:20px;"><b>Sentence Count:</b> <span id="sentence_count_editor1" class="fadein-out" style="padding-left:0px;"></span></div>
+                                        <div style="padding-left:20px;"><b>Character Count:</b> <span id="character_count_editor1" class="fadein-out" style="padding-left:0px;"></span></div>
+                                        <div style="padding-left:20px;"><b>Avg Word Length:</b> <span id="avg_word_editor1" class="fadein-out" style="padding-left:0px;"></span></div>
+                                        <div id="readability-report-editor1"></div>
+                                        <div id="report1-editor1"></div>
                                     </div>
                                     <div class="col-6 p-0">
                                         <div style="padding-left:20px;"><b>Flesch-Kincaid Score:</b> <span id="gradelevel_editor2" style="padding-left:0px;"></span></div>
-                                        <div id="readability-report2"></div>
+                                        <div style="padding-left:20px;"><b>Sentence Count:</b> <span id="sentence_count_editor2" class="fadein-out" style="padding-left:0px;"></span></div>
+                                        <div style="padding-left:20px;"><b>Character Count:</b> <span id="character_count_editor2" class="fadein-out" style="padding-left:0px;"></span></div>
+                                        <div style="padding-left:20px;"><b>Avg Word Length:</b> <span id="avg_word_editor2" class="fadein-out" style="padding-left:0px;"></span></div>
+                                        <div id="readability-report-editor2"></div>
                                     </div>
                                 </div>
                             </div>
@@ -343,9 +348,23 @@
                     console.log(data);
                     let grade_level_editor1 = data.grade_level_editor1;
                     let grade_level_editor2 = data.grade_level_editor2;
+                    let sentence_count_editor1 = data.sentence_count_editor1;
+                    let character_count_editor1 = data.character_count_editor1;
+                    let letter_count_editor1 = data.letter_count_editor1;
+                    let sentence_count_editor2 = data.sentence_count_editor2;
+                    let character_count_editor2 = data.character_count_editor2;
+                    let letter_count_editor2 = data.letter_count_editor2;
+                    let lexicon_count_editor1 = data.lexicon_count_editor1;
+                    let lexicon_count_editor2 = data.lexicon_count_editor2;
+                    let avg_word_editor1 = (letter_count_editor1/lexicon_count_editor1);
+                    let avg_word_editor2 = (letter_count_editor2/lexicon_count_editor2);
                     // Replace the innerHTML of the divs with the new values
                     document.getElementById("gradelevel_editor1").innerHTML = grade_level_editor1;
                     document.getElementById("gradelevel_editor2").innerHTML = grade_level_editor2;
+                    document.getElementById("sentence_count_editor1").innerHTML = sentence_count_editor1;
+                    document.getElementById("character_count_editor1").innerHTML = character_count_editor1;
+                    document.getElementById("avg_word_editor1").innerHTML = avg_word_editor1;
+                    document.getElementById("avg_word_editor2").innerHTML = avg_word_editor2;
                 })
                 .catch(err => console.error(err));
             myInterval = setInterval(arguments.callee, 2500);
@@ -578,7 +597,7 @@ window.onload = analyzeLengths;
             });
         });
 
-        var analyzer2 = new Analyzer2({
+        var analyzer2 = new Analyzer({
             selector: "#editor2",
             reportSelector: "#report2",
         });
