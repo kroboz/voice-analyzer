@@ -107,7 +107,7 @@ Analyzer.prototype.setup = function () {
   $("#readability-report1").append(`
  <div id="readability" role="tabpanel" aria-labelledby="readability-header" style="padding:0px;">
          <div class="card-body">
-                   <div id='punctuation' class='' style="padding:20px;"></div>
+                   <div id='punctuation' style="padding:20px;"></div>
          </div>
        </div>
 `);

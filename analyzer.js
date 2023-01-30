@@ -90,11 +90,7 @@ var Stats = {
 };
 
 function Analyzer(cfg) {
-  this.lastToneUpdate = null;
-  this.lastUpdate = null;
-  this.stylometryBusy = {};
-  this.stylometryLastRequest = {};
-  this.stylometryLastUpdate = {};
+
   this.selector = cfg.selector;
   this.reportSelector = cfg.reportSelector;
   this.setup();
@@ -102,65 +98,52 @@ function Analyzer(cfg) {
 }
 
 Analyzer.prototype.setup = function () {
+  var selector = this.selector;
   // result underlay for showing highlights
   //var id = this.selector.split("#").pop() + "-result";
   //$(this.selector).parent().append("<div id='" + id + "'></div>");
 
   // report widgets
-  $(this.reportSelector).append(`
 
-    <div id="report-widget">
-    <div class="face active" role="tabpanel" aria-labelledby="default-header">
-    <p class="text-small"><em>Your report results will appear here after you select your analysis.</em></p></div>
-  <div id="readability" role="tabpanel" aria-labelledby="readability-header">
-<div class="card">
-  <h5 class="card-header">Readability</h5>
-        <div class="card-body">
-         <div id="grade" class="mb-1 grade"></div>  
-         <div id="adverb" class="mb-1 adverb counter"></div>
-         <div id="passive" class="mb-1 passive counter"></div>
-         <div id="complex" class="mb-1 complex counter"></div>
-         <div id="hard" class="mb-1 hard counter"></div>
-         <div id="vhard" class="mb-1 vhard counter"></div>
-        </div>
-</div>
-      </div>
-<div class="vocab-report" id="vocab" role="tabpanel" aria-labelledby="vocab-header">
-          <div class="card">
-  <h5 class="card-header">Vocabulary</h5>
-        <div class="card-body">
+  $("#readability-report-" + selector).append(`
+ <div id="readability" role="tabpanel" aria-labelledby="readability-header" style="padding:0px;">
+         <div class="card-body">
+                   <div id='punctuation' style="padding:20px;"></div>
+         </div>
+       </div>
+`);
+  $("#vocab-report-" + selector).append(`
+  <div class="vocab-report" id="vocab" role="tabpanel" aria-labelledby="vocab-header" style="padding:20px;">
 <div id='you-words' class=''></div>
           <div id='me-words' class=''></div>
-            <div id='word-length' class='text-small' style="padding-top:20px;"></div>
-          <canvas id="word-chart" width="150" height="100"></canvas>
+          <div style="display:none;">  <div id='word-length' class='text-small' style="padding-top:20px; display:none;"></div>
+          <canvas id="word-chart" width="150" height="100" style="display:none;"></canvas></div>
+          <div id="short1" class="mb-1 short counter"></div>
+          <div id="medium1" class="mb-1 medium counter"></div>
+          <div id="long1" class="mb-1 long counter"></div>
 </div>
-</div>
-</div>
-<div class="tone-report" id="tone" role="tabpanel" aria-labelledby="tone-sentiment">
-<div class="card">
-  <h5 class="card-header">Tone & Sentiment</h5>
-        <div class="card-body">
-            <div id="sentiment-results1"></div>
-</div>
-</div>
-        </div>
-<div class="cadence-report" id="cadence" role="tabpanel" aria-labelledby="cadence-header">
-<div class="card">
-  <h5 class="card-header">Cadence</h5>
-        <div class="card-body">
-          <div id='sentence-length' class=''></div>
-          <canvas id="sentence-chart" width="150" height="100"></canvas>
-          <div id='punctuation' class=''></div>
-</div>
-</div>
-    </div>
-    </div>
- 
+`);
 
-  `);
+  $("#tone-report-" + selector).append(`
+<div class="tone-report" id="tone" role="tabpanel" aria-labelledby="tone-sentiment" style="padding:20px;">
+            <div id="sentiment-results1" style="padding:20px;"></div>
+        </div>
+`);
+
+  $("#cadence-report-" + selector).append(`
+<div class="cadence-report" id="cadence" role="tabpanel" aria-labelledby="cadence-header" style="padding:20px; display:none;">
+          <div id='sentence-length' class=''  style="padding:20px;"></div>
+          <canvas id="sentence-chart" width="150" height="100"></canvas>
+
+    </div>
+    </div>
+    `);
 };
 
 Analyzer.prototype.reset = function () {
+  this.grade = 0;
+  this.structure = [];
+
   this.data = {
     paragraphs: 0,
     sentences: 0,
@@ -197,34 +180,47 @@ Analyzer.prototype.analyze = function () {
   ("use strict");
   this.reset();
   let paragraphs = $(this.selector).find("p").toArray();
+
+  function cleanText(text) {
+    return text.replace(/[^a-z0-9.!? ]/gi, "").trim();
+  }
+  this.structure = paragraphs.map((p) => ({
+    sentences: this.getSentencesFromParagraph($(p).text()).flatMap((s) => ({
+      text: s,
+      words: cleanText(s)
+        .split(" ")
+        .filter((txt) => txt.replace(/ /g, "").length),
+    })),
+  }));
+  console.dir({ structure: this.structure });
+
   this.data.paragraphs = paragraphs.length;
+
   let resultTextPs = paragraphs.map((p, idx) =>
     this.processParagraph($(p), idx)
   );
   let resultPs = resultTextPs.map(
-    (textp, idx) => `<p id="para-${idx}">${textp}</p>`
-  );
+    (textp, idx) => `<p id="para-${idx}">${textp}</p>`);
   $(this.selector).html(resultPs);
 
-  this.data.grade = this.calculateLevel(
-    this.data.letters / this.data.paragraphs,
-    this.data.words / this.data.paragraphs,
-    this.data.sentences / this.data.paragraphs
+  //marktellez
+
+  const sentences = this.structure.map((p) => p.sentences);
+  const sentenceLength = sentences.reduce((acc, s) => acc + s.length, 0);
+  const words = sentences.flatMap((s) => s.flatMap((obj) => obj.words));
+  const letters = words.join("").split("");
+  console.dir({
+    sentences,
+    words,
+    letters,
+  });
+  this.grade = this.calculateLevel(
+    letters.length / this.structure.length,
+    words.length / this.structure.length,
+    sentenceLength / this.structure.length
   );
 
-  console.dir(this.data.letters / this.data.paragraphs);
-  console.dir(this.data.words / this.data.paragraphs);
-  console.dir(this.data.sentences / this.data.paragraphs);
 
-  this.report();
-  this.updateTone();
-  this.updateSentiment($(this.selector).text());
-
-  const models = ["carlton", "halbert"];
-  var aly = this;
-  models.forEach(function (m) {
-    aly.updateStylometry(m);
-  });
 
   this.lastUpdate = Date.now();
 };
@@ -348,9 +344,10 @@ const punctuationNames = {
   "’": "Apostrophes",
   "?": "Question Marks",
   "!": "Exclamation Points",
-  "-": "Hyphen",
+  "-": "Hyphens",
   "(": "Parenthesis",
 };
+
 
 Analyzer.prototype.updateSentiment = function (text) {
   var sentiment = "neutral";
@@ -360,7 +357,8 @@ Analyzer.prototype.updateSentiment = function (text) {
     if (intensity.compound > 0.1) {
       var pct = parseInt(intensity.compound * 100);
       sentiment = pct + "% positive";
-    } else if (intensity.compound < -0.1) {
+    } 
+    else if (intensity.compound < -0.1) {
       var pct = parseInt(-intensity.compound * 100);
       sentiment = pct + "% negative";
     }
@@ -382,84 +380,12 @@ function shuffle(a) {
   return a;
 }
 
-Analyzer.prototype.updateStylometry = function (model) {
-  let aly = this;
-  let paragraphs = $(this.selector).find("p").toArray();
-
-  var text = "";
-  paragraphs.forEach(function (p) {
-    text += $(p).text() + "\n";
-  });
-  //console.log(text);
-  var sentences = text.match(/[^\r\n]+/g);
-  if (!sentences) return;
-  //console.log(sentences);
-  shuffle(sentences);
-  var samples = [];
-  for (var i = 0; i < 10 && sentences.length; i++) {
-    var sample = "";
-    for (var j = 0; j < 1 && sentences.length; j++) {
-      var sentence = sentences.pop().trim();
-
-      if (sample != "") sample += " ";
-      sample += sentence;
-
-      if (sample.length > 200) break;
-    }
-
-    if (sample != "") samples.push(sample);
-  }
-
-  if (samples.length == 0) return;
-
-  var now = Date.now();
-  aly.stylometryLastRequest[model] = now;
-  if (aly.stylometryBusy[model]) return; // only allow 1 update at a time
-  aly.stylometryBusy[model] = true;
-  aly.stylometryLastUpdate[model] = now;
-
-  const modelSelector = "#stylo-score-" + model;
-  if (!$(modelSelector).length)
-    $("#stylo-score").append(`<div id="stylo-score-${model}"></div>`);
-
-  $(modelSelector).html(`<em>Analyzing ${model}...</em>`);
-  var data = { model: model, sentences: samples };
-  $.ajax({
-    url: "/stylo",
-    type: "POST",
-    contentType: "application/json",
-    data: JSON.stringify(data),
-    success: function (data) {
-      console.log(data);
-      if (!data.success) return;
-
-      //var numPos = 0;
-      var totalPos = 0;
-      data.predictions.forEach(function (prediction) {
-        //if (prediction.probabilities[1] > 0.999)
-        //  numPos++;
-        totalPos +=
-          prediction.probabilities[1] > 0.999 ? prediction.probabilities[1] : 0;
-        totalPos -= prediction.probabilities[0];
-      });
-      //var posPct = (numPos / data.predictions.length * 100.).toFixed(2);
-      var posPct = ((totalPos / data.predictions.length) * 100).toFixed(2);
-      var posPct = Math.max(0, posPct);
-      var modelDisplayName = model.charAt(0).toUpperCase() + model.slice(1);
-      $(modelSelector).html(`${posPct}% ${modelDisplayName}`);
-    },
-    complete: function () {
-      aly.stylometryBusy[model] = false;
-      if (aly.stylometryLastRequest[model] > aly.stylometryLastUpdate[model])
-        aly.updateStylometry(model);
-    },
-  });
-};
 
 Analyzer.prototype.updateWordSentenceHistogram = function (sentence) {
   // collect word length stats
   sentence.split(" ").map((word) => {
-    let wordLen = Math.min(word.length, this.data.wordLenHisto.length - 1);
+    let wordLen = Math.min(word.length,
+       this.data.wordLenHisto.length - 1);
     this.data.wordLenHisto[wordLen]++;
   });
 
@@ -482,13 +408,19 @@ Analyzer.prototype.processParagraph = function (p, idx) {
   });
 
   this.data.sentences += sentences.length;
+  let shortCount = 0;
+  let mediumCount = 0;
+  let longCount = 0;
+
   let hardOrNot = sentences.map((sent) => {
-    let cleanSentence = sent.replace(/[^a-z0-9.?! ]/gi, "");
+    let cleanSentence = sent.replace(/[^a-z0-9\.?! ]/gi, "").trim();
+
     this.updateWordSentenceHistogram(cleanSentence);
     let words = cleanSentence.split(" ").length;
     let letters = cleanSentence.split(" ").join("").length;
     this.data.words += words;
     this.data.letters += letters;
+
     this.data.punctuation[","] += this.getCharCount(/[,]/g, sent);
     this.data.punctuation["’"] += this.getCharCount(/['’]/g, sent);
     this.data.punctuation["?"] += this.getCharCount(/[?]/g, sent);
@@ -501,23 +433,40 @@ Analyzer.prototype.processParagraph = function (p, idx) {
     sent = this.getComplex(sent);
     sent = this.getPassive(sent);
     sent = this.getQualifier(sent);
+    sent = this.getAnger(sent);
+    sent = this.getDisgust(sent);
+    sent = this.getFear(sent);
+    sent = this.getJoy(sent);
+    sent = this.getSadness(sent);
+    sent = this.getAnalytical(sent);
+    sent = this.getConfident(sent);
+    sent = this.getTentative(sent);
     let level = this.calculateLevel(letters, words, 1);
 
-    if (words < 14) {
-      return sent;
-    } else if (level >= 10 && level < 14) {
-      this.data.hardSentences += 1;
-      return `<span class="hard">${sent}</span>`;
-    } else if (level >= 14) {
-      this.data.veryHardSentences += 1;
-      return `<span class="vhard">${sent}</span>`;
+    if (words < 4) {
+      shortCount+=1;
+      return `<span class="short">${sent}</span>`;
+    } else if (words >= 4 && words <= 11) {
+      mediumCount+=1;
+      return `<span class="medium">${sent}</span>`;
+    } else if (words >= 12) {
+      longCount+=1;
+      return `<span class="long">${sent}</span>`;
     }
-
-    return sent;
   });
 
-  return hardOrNot.join(" ");
+  let updatedText = hardOrNot.join("");
+  this.countSentenceLengths(updatedText);
+  return updatedText;
 };
+
+Analyzer.prototype.countSentenceLengths = function(updatedText) {
+  let shortCount = (updatedText.match(/<span class="short">/gi) || []).length;
+  let mediumCount = (updatedText.match(/<span class="medium">/gi) || []).length;
+  let longCount = (updatedText.match(/<span class="long">/gi) || []).length;
+  
+
+  }
 
 Analyzer.prototype.getSentencesFromParagraph = function (text) {
   text = text.replace(/[\n\r]/g, ""); // cleanup for easier regex
@@ -549,8 +498,7 @@ Analyzer.prototype.getMeWordCount = function (text) {
     "we've",
     "our",
     "ours",
-  ];
-  for (var wi = 0; wi < words.length; wi++)
+  ]; for (var wi = 0; wi < words.length; wi++)
     if (matchWords.indexOf(words[wi].toLowerCase()) != -1) count++;
   return count;
 };
@@ -566,15 +514,14 @@ Analyzer.prototype.getYouWordCount = function (text) {
 };
 
 Analyzer.prototype.report = function () {
-  $("#grade").show().html(`Grade ${this.data.grade}`);
+  $("#grade").show().html(`Grade ${this.grade}`);
 
   $("#adverb").hide();
   if (this.data.adverbs) {
     $("#adverb")
       .show()
       .html(
-        `<span class='num'>${this.data.adverbs}</span> adverb${
-          this.data.adverbs > 1 ? "s" : ""
+        `<span class='num'>${this.data.adverbs}</span> adverb${this.data.adverbs > 1 ? "s" : ""
         }. Aim for ${Math.round(this.data.paragraphs / 3)} or fewer.`
       );
   }
@@ -584,12 +531,33 @@ Analyzer.prototype.report = function () {
     $("#passive")
       .show()
       .html(
-        `<span class='num'>${this.data.passiveVoice}</span> use${
-          this.data.passiveVoice > 1 ? "s" : ""
+        `<span class='num'>${this.data.passiveVoice}</span> use${this.data.passiveVoice > 1 ? "s" : ""
         } of passive voice. Aim for ${Math.round(
           this.data.sentences / 5
         )} or fewer.`
       );
+  }
+
+  if (this.data.angerwordmatch) {
+    $("#angerwords")
+      .show()
+      .html(
+        `<span class='anger'>${this.data.angerwordmatch}</span> use${this.data.angerwordmatch > 1 ? "s" : ""
+        } of Anger.`
+      );
+  } else {
+    $("#angerwords").hide();
+  }
+
+  if (this.data.disgustwordmatch) {
+    $("#disgustwords")
+      .show()
+      .html(
+        `<span class='disgust'>${this.data.disgustwordmatch}</span> use${this.data.disgustwordmatch > 1 ? "s" : ""
+        } of Disgust.`
+      );
+  } else {
+    $("#disgustwords").hide();
   }
 
   $("#complex").hide();
@@ -597,8 +565,7 @@ Analyzer.prototype.report = function () {
     $("#complex")
       .show()
       .html(
-        `<span class='num'>${this.data.complex}</span> phrase${
-          this.data.complex > 1 ? "s" : ""
+        `<span class='num'>${this.data.complex}</span> phrase${this.data.complex > 1 ? "s" : ""
         } could be simplified.`
       );
   }
@@ -608,8 +575,7 @@ Analyzer.prototype.report = function () {
     $("#hard")
       .show()
       .html(
-        `<span class='num'>${this.data.hardSentences}</span> of ${
-          this.data.sentences
+        `<span class='num'>${this.data.hardSentences}</span> of ${this.data.sentences
         } sentence${this.data.sentences > 1 ? "s are" : " is"} hard to read.`
       );
   }
@@ -619,10 +585,8 @@ Analyzer.prototype.report = function () {
     $("#vhard")
       .show()
       .html(
-        `<span class='num'>${this.data.veryHardSentences}</span> of ${
-          this.data.sentences
-        } sentence${
-          this.data.sentences > 1 ? "s are" : " is"
+        `<span class='num'>${this.data.veryHardSentences}</span> of ${this.data.sentences
+        } sentence${this.data.sentences > 1 ? "s are" : " is"
         } very hard to read.`
       );
   }
@@ -633,30 +597,28 @@ Analyzer.prototype.report = function () {
   if (this.data.letters) {
     $("#word-length").show().html(`<span class='num'>
       Average Word length: ${(this.data.letters / this.data.words).toFixed(
-        2
-      )} characters</span>`);
+      2
+    )} characters</span>`);
     $("#sentence-length").show().html(`<span class='num'>
       Sentence length: ${(this.data.words / this.data.sentences).toFixed(
-        2
-      )} words</p>`);
+      2
+    )} words</p>`);
     var puncReport = "";
     for (p in this.data.punctuation) {
       let name = punctuationNames[p] || "Not Found";
       puncReport += `<div class="text-small"><span class="font-weight-bold pl-3"><b>${name}:</b> </span> ${(
         (this.data.punctuation[p] / this.data.sentences) *
         100
-      ).toFixed(2)}</div>`;
+      ).toFixed(0)}</div>`;
     }
     $("#punctuation").show()
       .html(`<p class="small-text" style="padding-top:20px;"><em>Punctuation per 100 sentences:</em></p> 
       ${puncReport}`);
 
-    this.updateHistoChart(this.data.wordLenHisto, "word-chart", "num words");
-    this.updateHistoChart(
-      this.data.sentenceLenHisto,
-      "sentence-chart",
-      "num sentences"
-    );
+    this.updateHistoChart(this.data.wordLenHisto,
+       "word-chart", "num words");
+    this.updateHistoChart(this.data.sentenceLenHisto,
+      "sentence-chart", "num sentences");
   }
 };
 
@@ -688,6 +650,7 @@ Analyzer.prototype.updateHistoChart = function (data, elId, label) {
 Analyzer.prototype.getAdverbs = function (sentence) {
   let lyWords = this.getLyWords();
   return sentence
+    .replace(/\s+/g, ' ')
     .split(" ")
     .map((word) => {
       if (
@@ -736,6 +699,78 @@ Analyzer.prototype.getQualifier = function (sentence) {
   return sentence;
 };
 
+Analyzer.prototype.getAnger = function (sentence) {
+  let angerwordmatch = this.getAngerWords();
+  let wordList = Object.keys(angerwordmatch);
+  wordList.forEach((key) => {
+    sentence = this.findAndSpan(sentence, key, "anger");
+  });
+  return sentence;
+};
+
+Analyzer.prototype.getDisgust = function (sentence) {
+  let disgustwordmatch = this.getDisgustWords();
+  let wordList = Object.keys(disgustwordmatch);
+  wordList.forEach((key) => {
+    sentence = this.findAndSpan(sentence, key, "disgust");
+  });
+  return sentence;
+};
+
+Analyzer.prototype.getFear = function (sentence) {
+  let fearwordmatch = this.getFearWords();
+  let wordList = Object.keys(fearwordmatch);
+  wordList.forEach((key) => {
+    sentence = this.findAndSpan(sentence, key, "fear");
+  });
+  return sentence;
+};
+
+Analyzer.prototype.getJoy = function (sentence) {
+  let joywordmatch = this.getJoyWords();
+  let wordList = Object.keys(joywordmatch);
+  wordList.forEach((key) => {
+    sentence = this.findAndSpan(sentence, key, "joy");
+  });
+  return sentence;
+};
+
+Analyzer.prototype.getSadness = function (sentence) {
+  let sadnesswordmatch = this.getSadnessWords();
+  let wordList = Object.keys(sadnesswordmatch);
+  wordList.forEach((key) => {
+    sentence = this.findAndSpan(sentence, key, "sadness");
+  });
+  return sentence;
+};
+
+Analyzer.prototype.getAnalytical = function (sentence) {
+  let analyticalwordmatch = this.getAnalyticalWords();
+  let wordList = Object.keys(analyticalwordmatch);
+  wordList.forEach((key) => {
+    sentence = this.findAndSpan(sentence, key, "analytical");
+  });
+  return sentence;
+};
+
+Analyzer.prototype.getConfident = function (sentence) {
+  let confidentwordmatch = this.getConfidentWords();
+  let wordList = Object.keys(confidentwordmatch);
+  wordList.forEach((key) => {
+    sentence = this.findAndSpan(sentence, key, "confident");
+  });
+  return sentence;
+};
+
+Analyzer.prototype.getTentative = function (sentence) {
+  let tentativewordmatch = this.getTentativeWords();
+  let wordList = Object.keys(tentativewordmatch);
+  wordList.forEach((key) => {
+    sentence = this.findAndSpan(sentence, key, "tentative");
+  });
+  return sentence;
+};
+
 Analyzer.prototype.checkPrewords = function (words, originalWords, match) {
   let preWords = ["is", "are", "was", "were", "be", "been", "being"];
   let index = words.indexOf(match);
@@ -756,20 +791,19 @@ Analyzer.prototype.checkPrewords = function (words, originalWords, match) {
 };
 
 Analyzer.prototype.calculateLevel = function (letters, words, sentences) {
-  console.dir({ letters, words, sentences });
   if (words === 0 || sentences === 0) {
     return 0;
   }
+  console.dir({ letters, words, sentences });
   let level = Math.round(
-    4.71 * (letters / words) + (0.5 * words) / sentences - 21.43
+    4.71 * (letters / words) + 0.5 * (words / sentences) - 21.43
   );
-  console.dir({ level });
   return level <= 0 ? 0 : level;
 };
 
 Analyzer.prototype.findAndSpan = function (sentence, string, type) {
   let index = sentence.toLowerCase().indexOf(string);
-  let a = { complex: "complex", qualifier: "adverbs" };
+  let a = { complex: "complex", qualifier: "adverbs", anger: "angerwordmatch", disgust: "disgustwordmatch", fear: "fearwordmatch", joy: "joywordmatch", sadness: "sadnesswordmatch", analytical: "analyticalwordmatch", confident: "confidentwordmatch", tentative: "tentativewordmatch"};
   if (index >= 0) {
     if (
       (index > 0 &&
@@ -1272,5 +1306,56 @@ Analyzer.prototype.getJustifierWords = function () {
     "we were wondering": 1,
     "we will try": 1,
     "we wonder": 1,
+  };
+};
+
+
+
+Analyzer.prototype.getAngerWords = function () {
+  return {
+    "angry": 1,
+    "mad": 1,
+  };
+};
+
+Analyzer.prototype.getDisgustWords = function () {
+  return {
+    "disgust": 1,
+  };
+};
+
+Analyzer.prototype.getFearWords = function () {
+  return {
+    "fear": 1,
+  };
+};
+
+Analyzer.prototype.getJoyWords = function () {
+  return {
+    "joy": 1,
+  };
+};
+
+Analyzer.prototype.getSadnessWords = function () {
+  return {
+    "sadness": 1,
+  };
+};
+
+Analyzer.prototype.getConfidentWords = function () {
+  return {
+    "confident": 1,
+  };
+};
+
+Analyzer.prototype.getAnalyticalWords = function () {
+  return {
+    "analytical": 1,
+  };
+};
+
+Analyzer.prototype.getTentativeWords = function () {
+  return {
+    "tentative": 1,
   };
 };
